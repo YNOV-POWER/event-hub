@@ -1,0 +1,387 @@
+openapi: 3.1.0
+info:
+  title: EventHub API
+  version: 0.1.0
+  description: |
+    Implémentation du contrat d'API v0.1 (`api-contract-v0.md`).
+
+    Ce document ne décrit que les endpoints implémentés : **E1** `GET /events` et **E2** `GET /events/{id}`.
+
+    **Erreurs** : toute réponse non 2xx est un objet Problem Details (RFC 9457) servi en
+    `application/problem+json`, avec les membres d'extension `code` (code métier stable, sur lequel
+    le front se base), `requestId` (aussi renvoyé dans le header `X-Request-Id`) et `errors`
+    (détail par champ, uniquement pour les erreurs de validation).
+servers:
+  - url: /api
+tags:
+  - name: Events
+paths:
+  /events:
+    get:
+      tags: [Events]
+      operationId: listEvents
+      summary: Catalogue public des événements (E1, US09)
+      description: |
+        Retourne les événements `PUBLISHED` dont `startsAt` est compris entre `from` (défaut : maintenant)
+        et `to`. Les filtres se combinent en ET. Un paramètre inconnu ou invalide renvoie
+        `400 INVALID_QUERY_PARAM`. Le tri applique un tie-breaker sur `id` pour une pagination stable.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/Category"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Page d'événements publiés.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+        "400":
+          $ref: "#/components/responses/InvalidQueryParam"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /events/{id}:
+    get:
+      tags: [Events]
+      operationId: getEvent
+      summary: Détail d'un événement (E2, US10)
+      description: |
+        Un événement `PUBLISHED` ou `CANCELLED` est lisible par tous. Un événement `DRAFT` n'est
+        visible que de son organisateur ; pour tout autre appelant la réponse est `404`, afin de ne pas
+        révéler son existence. L'authentification n'étant pas encore implémentée, un `DRAFT` renvoie
+        toujours `404`. Un identifiant qui n'est pas un UUID renvoie aussi `404`.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: L'événement demandé.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  headers:
+    X-Request-Id:
+      description: Identifiant de corrélation de la requête, repris dans `requestId` des erreurs.
+      schema:
+        type: string
+        example: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Numéro de page, à partir de 1.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000000000
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    From:
+      name: from
+      in: query
+      description: "`startsAt >= from`. Défaut : maintenant. ISO 8601 UTC avec suffixe `Z`."
+      schema:
+        type: string
+        format: date-time
+      example: "2026-12-01T00:00:00Z"
+    To:
+      name: to
+      in: query
+      description: "`startsAt <= to`. Doit être postérieur ou égal à `from`. ISO 8601 UTC avec suffixe `Z`."
+      schema:
+        type: string
+        format: date-time
+    Category:
+      name: category
+      in: query
+      description: Une ou plusieurs catégories séparées par des virgules (`WORKSHOP,CONCERT`).
+      schema:
+        type: string
+      example: WORKSHOP,CONCERT
+    Q:
+      name: q
+      in: query
+      description: Recherche insensible à la casse dans `title`, `description` et `location`.
+      schema:
+        type: string
+        minLength: 2
+        maxLength: 100
+    Sort:
+      name: sort
+      in: query
+      description: Critère de tri unique. Le préfixe `-` indique l'ordre descendant.
+      schema:
+        type: string
+        enum: [startsAt, -startsAt, createdAt, -createdAt, title, -title]
+        default: startsAt
+
+  schemas:
+    EventCategory:
+      type: string
+      enum: [CONFERENCE, WORKSHOP, CONCERT, OTHER]
+    EventStatus:
+      type: string
+      enum: [DRAFT, PUBLISHED, CANCELLED]
+    OrganizerSummary:
+      type: object
+      required: [id, displayName]
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+    Event:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - category
+        - location
+        - startsAt
+        - endsAt
+        - capacity
+        - confirmedCount
+        - remainingSeats
+        - status
+        - organizer
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 3
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 5000
+        category:
+          $ref: "#/components/schemas/EventCategory"
+        location:
+          type: string
+          minLength: 1
+          maxLength: 200
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+        capacity:
+          type: integer
+          minimum: 1
+        confirmedCount:
+          type: integer
+          minimum: 0
+          readOnly: true
+        remainingSeats:
+          type: integer
+          description: "`capacity - confirmedCount`"
+          readOnly: true
+        status:
+          $ref: "#/components/schemas/EventStatus"
+        organizer:
+          $ref: "#/components/schemas/OrganizerSummary"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: 00000000-0000-4000-8200-000000000001
+        title: TypeScript Workshop
+        description: Hands-on session.
+        category: WORKSHOP
+        location: Hub Central, 12 rue de la République, Lyon
+        startsAt: "2026-12-10T18:00:00.000Z"
+        endsAt: "2026-12-10T21:00:00.000Z"
+        capacity: 30
+        confirmedCount: 2
+        remainingSeats: 28
+        status: PUBLISHED
+        organizer:
+          id: 00000000-0000-4000-8100-000000000001
+          displayName: Grace
+        createdAt: "2026-11-16T09:05:00.000Z"
+        updatedAt: "2026-11-16T09:05:00.000Z"
+    PaginationMeta:
+      type: object
+      required: [page, pageSize, totalItems, totalPages]
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalItems:
+          type: integer
+        totalPages:
+          type: integer
+    EventListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+    EventResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Event"
+    FieldError:
+      type: object
+      required: [field, code, message]
+      properties:
+        field:
+          type: string
+          description: Chemin pointé du champ ou nom du paramètre de query.
+        code:
+          type: string
+          description: |
+            Code stable : `UNKNOWN_PARAMETER`, `INVALID_TYPE`, `INVALID_FORMAT`, `INVALID_VALUE`,
+            `MIN_VALUE`, `MAX_VALUE`, `MIN_LENGTH`, `MAX_LENGTH`, `INVALID_RANGE`.
+        message:
+          type: string
+    ErrorCode:
+      type: string
+      description: Code métier stable (contrat §5.1). Le front se base sur lui, jamais sur `detail`.
+      enum:
+        - MALFORMED_REQUEST
+        - INVALID_QUERY_PARAM
+        - UNAUTHENTICATED
+        - INVALID_CREDENTIALS
+        - FORBIDDEN
+        - NOT_FOUND
+        - EMAIL_ALREADY_USED
+        - INVALID_STATE_TRANSITION
+        - EVENT_NOT_EDITABLE
+        - CAPACITY_BELOW_CONFIRMED
+        - VALIDATION_FAILED
+        - TOO_MANY_REQUESTS
+        - INTERNAL_ERROR
+    Problem:
+      type: object
+      description: Problem Details (RFC 9457) avec les extensions `code`, `requestId` et `errors`.
+      required: [type, title, status, detail, instance, code, requestId]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: Référence URI du type de problème, dérivée de `code` (ex. `/problems/not-found`).
+        title:
+          type: string
+          description: Résumé lisible du type de problème, stable pour un même `type`.
+        status:
+          type: integer
+          description: Reprend le code HTTP.
+        detail:
+          type: string
+          description: Explication en anglais destinée au développeur, non affichée telle quelle.
+        instance:
+          type: string
+          format: uri-reference
+          description: Chemin de la requête concernée.
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        requestId:
+          type: string
+        errors:
+          type: array
+          description: Présent uniquement pour les erreurs de validation.
+          items:
+            $ref: "#/components/schemas/FieldError"
+
+  responses:
+    InvalidQueryParam:
+      description: Paramètre de query inconnu ou hors contraintes.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/invalid-query-param
+            title: Invalid query parameter
+            status: 400
+            detail: One or more query parameters are invalid.
+            instance: /api/events
+            code: INVALID_QUERY_PARAM
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+            errors:
+              - field: pageSize
+                code: MAX_VALUE
+                message: pageSize must be <= 100.
+    NotFound:
+      description: Ressource inexistante ou non visible pour l'appelant.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/not-found
+            title: Resource not found
+            status: 404
+            detail: Event not found.
+            instance: /api/events/00000000-0000-4000-8200-000000000010
+            code: NOT_FOUND
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    InternalError:
+      description: Erreur serveur non prévue. Aucun détail interne n'est exposé.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/internal-error
+            title: Internal server error
+            status: 500
+            detail: An unexpected error occurred.
+            instance: /api/events
+            code: INTERNAL_ERROR
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b

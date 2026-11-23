@@ -126,19 +126,6 @@
   gap: 10px;
 }
 
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-text);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--text-small);
-  font-weight: 700;
-}
-
 .userInfo {
   display: flex;
   flex-direction: column;

@@ -20,22 +20,6 @@
   color: var(--color-primary);
 }
 
-.revalidating {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-text);
-  font-size: var(--text-small);
-  font-weight: 600;
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
 .bannerAlert {
   margin-bottom: var(--space-2);
 }
@@ -51,40 +35,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-}
-
-.hero {
-  height: 280px;
-  border-radius: var(--radius-xl);
-  padding: var(--space-4);
-  display: flex;
-  align-items: flex-start;
-}
-
-.bannerWorkshop {
-  background: var(--gradient-workshop);
-}
-
-.bannerConcert {
-  background: var(--gradient-concert);
-}
-
-.bannerConference {
-  background: var(--gradient-conference);
-}
-
-.bannerOther {
-  background: var(--gradient-other);
-}
-
-.bannerCancelled {
-  background: var(--gradient-cancelled);
-}
-
-.heroBadges {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
 }
 
 .title {
@@ -212,20 +162,6 @@
   color: var(--color-text-muted);
 }
 
-.progressTrack {
-  height: 8px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-neutral-soft);
-  overflow: hidden;
-}
-
-.progressBar {
-  height: 100%;
-  background-color: var(--color-primary);
-  border-radius: var(--radius-full);
-  transition: width 240ms ease;
-}
-
 .note {
   margin: 0;
   text-align: center;
@@ -243,12 +179,6 @@
   gap: var(--space-2);
   font-size: var(--text-body);
   color: var(--color-text-muted);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @media (max-width: 900px) {

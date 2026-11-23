@@ -11,6 +11,7 @@ import type { ApiError } from "@/api/errors";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { StrengthMeter } from "@/components/ui/StrengthMeter";
 import styles from "./AccountRegistrationForm.module.css";
 
 const KNOWN_FIELDS = new Set<keyof RegisterAccountDto>([
@@ -70,15 +71,11 @@ export function AccountRegistrationForm({
   });
 
   const passwordValue = useWatch({ control, name: "password", defaultValue: "" });
-  const passwordLevel = getPasswordLevel(passwordValue.length);
 
   useEffect(() => {
     if (!serverError) return;
     if (serverError.status === 409 && serverError.code === "EMAIL_ALREADY_USED") {
-      setError("email", {
-        type: "server",
-        message: t("errors.codes.EMAIL_ALREADY_USED"),
-      });
+      setError("email", { type: "server", message: t("errors.codes.EMAIL_ALREADY_USED") });
       return;
     }
     if (serverError.status === 422) {
@@ -95,11 +92,8 @@ export function AccountRegistrationForm({
 
   const isEmailConflict =
     serverError?.status === 409 && serverError.code === "EMAIL_ALREADY_USED";
-
   const bannerMessage = serverError
-    ? t(`errors.codes.${serverError.code}`, {
-        defaultValue: t("errors.genericDescription"),
-      })
+    ? t(`errors.codes.${serverError.code}`, { defaultValue: t("errors.genericDescription") })
     : null;
 
   return (
@@ -150,20 +144,7 @@ export function AccountRegistrationForm({
           error={errors.password?.message}
           {...register("password")}
         />
-        <div className={styles.strengthBar} aria-hidden="true">
-          {[1, 2, 3, 4].map((segment) => (
-            <span
-              key={segment}
-              className={`${styles.segment} ${
-                segment <= passwordLevel
-                  ? passwordLevel >= 3
-                    ? styles.segmentGood
-                    : styles.segmentWarn
-                  : ""
-              }`.trim()}
-            />
-          ))}
-        </div>
+        <StrengthMeter level={getPasswordLevel(passwordValue.length)} />
       </div>
 
       <Button type="submit" variant="primary" fullWidth isLoading={isSubmitting}>

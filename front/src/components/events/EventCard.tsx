@@ -4,33 +4,18 @@ import Link from "next/link";
 import type { TFunction } from "i18next";
 import { Clock, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { EventCategory, EventItem } from "@/api/client";
+import type { EventItem } from "@/api/client";
+import { Avatar } from "@/components/ui/Avatar";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
-import {
-  formatCalendarChip,
-  formatEventCardDateRange,
-  getInitials,
-} from "@/i18n/formatters";
+import { CalendarChip } from "@/components/ui/CalendarChip";
+import { formatCalendarChip, formatEventCardDateRange } from "@/i18n/formatters";
+import { EventBanner } from "./EventBanner";
 import styles from "./EventCard.module.css";
 
 export interface EventCardProps {
   readonly event: EventItem;
   readonly href?: string;
 }
-
-const CATEGORY_DOT_COLORS: Record<EventCategory, string> = {
-  WORKSHOP: "#4F46E5",
-  CONCERT: "#F97316",
-  CONFERENCE: "#0284C7",
-  OTHER: "#10B981",
-};
-
-const BANNER_CLASS_BY_CATEGORY: Record<EventCategory, string> = {
-  WORKSHOP: styles.bannerWorkshop ?? "",
-  CONCERT: styles.bannerConcert ?? "",
-  CONFERENCE: styles.bannerConference ?? "",
-  OTHER: styles.bannerOther ?? "",
-};
 
 function getSeatBadgeInfo(
   event: EventItem,
@@ -64,10 +49,6 @@ export function EventCard({ event, href }: EventCardProps) {
   const calendar = formatCalendarChip(event.startsAt);
   const dateRange = formatEventCardDateRange(event.startsAt, event.endsAt);
   const seatBadge = getSeatBadgeInfo(event, t);
-  const bannerClass =
-    event.status === "CANCELLED"
-      ? styles.bannerCancelled
-      : BANNER_CLASS_BY_CATEGORY[event.category];
 
   return (
     <article className={styles.card}>
@@ -76,16 +57,12 @@ export function EventCard({ event, href }: EventCardProps) {
         className={styles.link}
         aria-label={t("eventCard.viewDetails", { title: event.title })}
       >
-        <div className={`${styles.banner} ${bannerClass}`}>
-          <Badge tone="frosted" dot dotColor={CATEGORY_DOT_COLORS[event.category]}>
-            {t(`categories.${event.category}`)}
-          </Badge>
-
-          <div className={styles.calendarChip} aria-hidden="true">
-            <span className={styles.calendarMonth}>{calendar.month}</span>
-            <span className={styles.calendarDay}>{calendar.day}</span>
-          </div>
-        </div>
+        <EventBanner
+          category={event.category}
+          status={event.status}
+          size="card"
+          rightSlot={<CalendarChip month={calendar.month} day={calendar.day} />}
+        />
 
         <div className={styles.body}>
           <h3 className={styles.title}>{event.title}</h3>
@@ -103,9 +80,7 @@ export function EventCard({ event, href }: EventCardProps) {
 
           <div className={styles.footer}>
             <div className={styles.organizer}>
-              <span className={styles.avatar} aria-hidden="true">
-                {getInitials(event.organizer.displayName)}
-              </span>
+              <Avatar name={event.organizer.displayName} size="sm" />
               <span className={styles.organizerName}>
                 {t("eventCard.organizedBy", { name: event.organizer.displayName })}
               </span>

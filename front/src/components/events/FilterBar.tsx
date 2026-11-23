@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FilterX, RefreshCw, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { FilterX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { EventCategory, EventSort } from "@/api/client";
 import { Chip } from "@/components/ui/Chip";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { Select } from "@/components/ui/Select";
+import { SyncIndicator } from "@/components/ui/SyncIndicator";
 import type { CatalogueFilterState, DatePreset } from "@/hooks/useEventFilters";
 import styles from "./FilterBar.module.css";
 
@@ -68,77 +71,59 @@ export function FilterBar({
     return () => clearTimeout(timer);
   }, [searchDraft, filters.q, onSearchChange]);
 
-  const showShortSearchHint = searchDraft.trim().length === 1;
+  const dateOptions = useMemo(
+    () =>
+      DATE_PRESETS.map((preset) => ({
+        value: preset,
+        label: t(`catalogue.datePresets.${preset}`),
+      })),
+    [t],
+  );
+
+  const sortOptions = useMemo(
+    () =>
+      SORT_OPTIONS.map((option) => ({
+        value: option,
+        label: t(`catalogue.sortOptions.${option}`),
+      })),
+    [t],
+  );
+
+  const shortHint =
+    searchDraft.trim().length === 1 ? t("catalogue.searchTooShort") : undefined;
 
   return (
     <section aria-label={t("catalogue.categoryFilterLabel")} className={styles.wrapper}>
       <div className={styles.topRow}>
-        <div className={styles.searchGroup}>
-          <label htmlFor="catalogue-search" className="sr-only">
-            {t("catalogue.searchLabel")}
-          </label>
-          <div className={styles.searchInputWrap}>
-            <Search size={16} className={styles.searchIcon} aria-hidden="true" />
-            <input
-              id="catalogue-search"
-              type="search"
-              value={searchDraft}
-              onChange={(event) => setSearchDraft(event.target.value)}
-              placeholder={t("catalogue.searchPlaceholder")}
-              maxLength={100}
-              className={styles.searchInput}
-              aria-describedby={showShortSearchHint ? "search-hint" : undefined}
-            />
-          </div>
-          {showShortSearchHint ? (
-            <p id="search-hint" className={styles.hint}>
-              {t("catalogue.searchTooShort")}
-            </p>
-          ) : null}
-        </div>
+        <SearchInput
+          id="catalogue-search"
+          label={t("catalogue.searchLabel")}
+          placeholder={t("catalogue.searchPlaceholder")}
+          value={searchDraft}
+          maxLength={100}
+          hint={shortHint}
+          onChange={(event) => setSearchDraft(event.target.value)}
+        />
 
-        <div className={styles.selectGroup}>
-          <label htmlFor="catalogue-dates" className={styles.selectLabel}>
-            {t("catalogue.datePresetLabel")}
-          </label>
-          <select
-            id="catalogue-dates"
-            value={filters.datePreset}
-            onChange={(event) => onDatePresetChange(event.target.value as DatePreset)}
-            className={styles.select}
-          >
-            {DATE_PRESETS.map((preset) => (
-              <option key={preset} value={preset}>
-                {t(`catalogue.datePresets.${preset}`)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          id="catalogue-dates"
+          label={t("catalogue.datePresetLabel")}
+          value={filters.datePreset}
+          options={dateOptions}
+          onChange={(event) => onDatePresetChange(event.target.value as DatePreset)}
+        />
 
-        <div className={styles.selectGroup}>
-          <label htmlFor="catalogue-sort" className={styles.selectLabel}>
-            {t("catalogue.sortLabel")}
-          </label>
-          <select
-            id="catalogue-sort"
-            value={filters.sort}
-            onChange={(event) => onSortChange(event.target.value as EventSort)}
-            className={styles.select}
-          >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {t(`catalogue.sortOptions.${option}`)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          id="catalogue-sort"
+          label={t("catalogue.sortLabel")}
+          value={filters.sort}
+          options={sortOptions}
+          onChange={(event) => onSortChange(event.target.value as EventSort)}
+        />
       </div>
 
       <div className={styles.chipsRow} role="group" aria-label={t("catalogue.categoryFilterLabel")}>
-        <Chip
-          active={filters.categories.length === 0}
-          onClick={() => onToggleCategory("ALL")}
-        >
+        <Chip active={filters.categories.length === 0} onClick={() => onToggleCategory("ALL")}>
           {t("categories.ALL")}
         </Chip>
         {ALL_CATEGORIES.map((category) => (
@@ -163,12 +148,7 @@ export function FilterBar({
               })}
             </p>
           ) : null}
-          {isRevalidating ? (
-            <span className={styles.revalidating} role="status" aria-live="polite">
-              <RefreshCw size={13} className={styles.spin} aria-hidden="true" />
-              {t("catalogue.revalidating")}
-            </span>
-          ) : null}
+          {isRevalidating ? <SyncIndicator label={t("catalogue.revalidating")} /> : null}
         </div>
 
         {isFiltered ? (

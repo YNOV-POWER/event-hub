@@ -4,7 +4,7 @@ import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { UserRole } from "@/api/client";
-import { getInitials } from "@/i18n/formatters";
+import { Avatar } from "./Avatar";
 import styles from "./Navbar.module.css";
 
 export interface NavbarUser {
@@ -68,9 +68,7 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
           {user ? (
             <>
               <div className={styles.userBadge}>
-                <span className={styles.avatar} aria-hidden="true">
-                  {getInitials(user.displayName)}
-                </span>
+                <Avatar name={user.displayName} size="md" />
                 <div className={styles.userInfo}>
                   <span className={styles.userName}>{user.displayName}</span>
                   <span className={styles.userRole}>{t(`nav.roles.${user.role}`)}</span>

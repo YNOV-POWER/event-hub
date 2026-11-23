@@ -106,6 +106,26 @@ npm run build
 
 ---
 
+## Stratégie de branches & contribution
+
+| Branche | Environnement / rôle | Règles de protection |
+|---|---|---|
+| **`main`** | **Production** *(déploie Storybook sur GitHub Pages)* | Protégée (admins inclus) : aucun commit direct, PR obligatoire, **≥ 1 validation d'un pair**, force-push et suppression interdits |
+| **`develop`** | **Préproduction / intégration** | Protégée (admins inclus) : aucun commit direct, PR obligatoire, **≥ 1 validation d'un pair**, force-push et suppression interdits |
+| `feature/<nom>`, `fix/<nom>`, `docs/<nom>` | Développement d'une tâche / US | Créée depuis `develop`, fusionnée vers `develop` via PR |
+
+### Flux de travail
+
+1. Créer une branche depuis `develop` :
+   ```bash
+   git checkout develop && git pull
+   git checkout -b feature/<nom-court>
+   ```
+2. Ouvrir une **Pull Request vers `develop`** et obtenir **au moins une validation** d'un pair (toute nouvelle poussée révoque les validations obsolètes).
+3. Pour livrer en production : ouvrir une **Pull Request de `develop` vers `main`** (validation d'un pair requise).
+
+---
+
 ## Structure du dépôt
 
 ```text
@@ -126,5 +146,5 @@ npm run build
 - Back : [`back/README.md`](back/README.md)
 - Front : [`front/README.md`](front/README.md)
 - Contrat d'API : [`api-contract-v0.md`](api-contract-v0.md)
-- Compte rendu Atelier 6 & écarts constatés : [`doc/2026-11-23_front-atelier-6-report.md`](doc/2026-11-23_front-atelier-6-report.md)
+- Compte rendu : [`doc/`](doc/)
 - Suivi Jira : [`Cours/Jira.md`](Cours/Jira.md)

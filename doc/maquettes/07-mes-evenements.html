@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>07 · Mes événements (organisateur)</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a>Événements</a><a>Mes inscriptions</a><a class="current">Mes événements</a></nav>
+  <div class="user">Grace <span class="role org">ORGANIZER</span><a class="btn">Se déconnecter</a></div>
+</header>
+<div class="page">
+<main>
+  <div class="row"><h1 style="margin:0">Mes événements</h1><span class="spacer"></span><span class="btn primary">+ Créer un événement</span></div>
+  <div class="row" style="margin:16px 0">
+    <span class="btn primary">Tous</span><span class="btn">Brouillons</span><span class="btn">Publiés</span><span class="btn">Annulés</span>
+    <span class="spacer"></span><div class="input" style="width:200px">Tri : date ↓ ▾</div>
+  </div>
+  <div class="alert ok">« Conférence Accessibilité Web » a été publié.</div>
+  <table>
+    <tr><th>Titre</th><th>Date</th><th>Statut</th><th>Inscrits</th><th>Actions</th></tr>
+    <tr><td><a>Conférence Accessibilité Web</a></td><td>15/12/2026 09:00</td><td><span class="status DRAFT">BROUILLON</span></td><td>–</td>
+      <td><span class="btn primary">Publier</span> <span class="btn">Modifier</span> <span class="btn danger">Annuler</span></td></tr>
+    <tr><td><a>TypeScript Workshop</a></td><td>10/12/2026 19:00</td><td><span class="status PUBLISHED">PUBLIÉ</span></td><td>18 / 30</td>
+      <td><span class="btn">Inscrits</span> <span class="btn">Modifier</span> <span class="btn danger">Annuler</span></td></tr>
+    <tr class="muted"><td><a>Atelier Figma</a></td><td>14/09/2026 14:00</td><td><span class="status CANCELLED">ANNULÉ</span></td><td>0 / 20</td>
+      <td><span class="btn">Dupliquer</span></td></tr>
+  </table>
+  <div class="pagination"><span class="current">1</span><span>2</span><span>›</span></div>
+
+  <p class="states-title">Confirmation d'annulation (US08)</p>
+  <div class="modal-backdrop"><div class="modal">
+    <h3 style="margin-top:0">Annuler « TypeScript Workshop » ?</h3>
+    <p>18 inscrits seront notifiés et leurs inscriptions annulées. Cette action est définitive.</p>
+    <div class="row"><span class="spacer"></span><span class="btn">Retour</span><span class="btn danger">Annuler l'événement</span></div>
+  </div></div>
+
+  <p class="states-title">Erreurs de publication (US06)</p>
+  <div class="states">
+    <div class="card"><div class="alert error">Impossible de publier : la date de début est passée. <a>Modifier</a></div><div class="small muted">422 VALIDATION_FAILED</div></div>
+    <div class="card"><div class="alert warn">Cet événement a déjà été publié ou annulé.</div><div class="small muted">409 INVALID_STATE_TRANSITION</div></div>
+    <div class="card state"><strong>Aucun événement</strong>Créez votre premier événement.<br><br><span class="btn primary">+ Créer</span></div>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>Besoins · US05 (SCRUM-31)</h2>
+    <ul>
+      <li>Liste paginée de mes événements avec statut ; filtre par statut.</li>
+      <li>Événements passés inclus.</li>
+      <li>États vide, chargement et erreur.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>US06 / US08 (SCRUM-33, SCRUM-37)</h2>
+    <ul>
+      <li>« Publier » visible uniquement en <code>DRAFT</code>.</li>
+      <li>« Annuler » avec modale ; masqué si <code>CANCELLED</code>.</li>
+      <li>Statut mis à jour depuis la réponse, sans rechargement.</li>
+      <li>Messages dédiés 409 / 422.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>API</h2>
+    <ul>
+      <li><code>GET /me/events?status&amp;page&amp;sort</code> (E3)</li>
+      <li><code>POST /events/{id}/publish</code> (E6)</li>
+      <li><code>POST /events/{id}/cancel</code> (E7)</li>
+    </ul>
+  </div>
+  <div class="card"><h2>Could</h2><ul><li>US26 : dupliquer un événement.</li></ul></div>
+</aside>
+</div>
+</body>
+</html>

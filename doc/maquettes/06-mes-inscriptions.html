@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>06 · Mes inscriptions</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a>Événements</a><a class="current">Mes inscriptions</a></nav>
+  <div class="user">Ada <span class="role">PARTICIPANT</span><a class="btn">Se déconnecter</a></div>
+</header>
+<div class="page">
+<main>
+  <h1>Mes inscriptions</h1>
+  <div class="alert info">Bonne nouvelle : une place s'est libérée, vous êtes inscrit·e à « Jazz au Transbordeur ».</div>
+
+  <h3>À venir</h3>
+  <table>
+    <tr><th>Événement</th><th>Date</th><th>Lieu</th><th>Statut</th><th></th></tr>
+    <tr><td><a>TypeScript Workshop</a></td><td>10/12/2026 19:00</td><td>Hub Central, Lyon</td><td><span class="status CONFIRMED">CONFIRMÉ</span></td><td><a class="small">.ics</a> · <a class="small" style="color:#b91c1c">Se désinscrire</a></td></tr>
+    <tr><td><a>Jazz au Transbordeur</a></td><td>12/12/2026 20:30</td><td>Villeurbanne</td><td><span class="status CONFIRMED">CONFIRMÉ</span></td><td><a class="small">.ics</a> · <a class="small" style="color:#b91c1c">Se désinscrire</a></td></tr>
+    <tr><td><a>Conférence Accessibilité</a></td><td>15/12/2026 09:00</td><td>Ynov Campus, Lyon</td><td><span class="status WAITLISTED">ATTENTE · 3ᵉ</span></td><td><a class="small" style="color:#b91c1c">Quitter</a></td></tr>
+  </table>
+
+  <h3 style="margin-top:28px">Passées</h3>
+  <table>
+    <tr><th>Événement</th><th>Date</th><th>Lieu</th><th>Statut</th></tr>
+    <tr class="muted"><td>Meetup Node.js</td><td>02/10/2026 18:30</td><td>Lyon</td><td><span class="status CONFIRMED">CONFIRMÉ</span></td></tr>
+    <tr class="muted"><td>Atelier Figma</td><td>14/09/2026 14:00</td><td>Lyon</td><td><span class="status CANCELLED">ANNULÉ</span></td></tr>
+  </table>
+
+  <p class="states-title">États</p>
+  <div class="states">
+    <div class="card"><div class="skeleton"></div><div class="skeleton"></div><div class="small muted">Chargement</div></div>
+    <div class="card state"><strong>Aucune inscription</strong>Parcourez le catalogue pour trouver un événement.<br><br><a class="btn primary">Voir les événements</a></div>
+    <div class="card state"><strong>Erreur de chargement</strong><br><a class="btn">Réessayer</a></div>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>Besoins · US14 (SCRUM-48)</h2>
+    <ul>
+      <li>Sections « À venir » et « Passées ».</li>
+      <li>Statut affiché ; états vide et chargement.</li>
+      <li>Page réservée aux utilisateurs connectés.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Should / Could</h2>
+    <ul>
+      <li>US20/US21 : statut <code>WAITLISTED</code> + position, promotion visible.</li>
+      <li>US28 : lien d'export .ics par événement.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>API (Sprint 2)</h2>
+    <ul><li><code>GET /me/registrations</code></li><li><code>DELETE /events/{id}/registrations/me</code></li></ul>
+  </div>
+</aside>
+</div>
+</body>
+</html>

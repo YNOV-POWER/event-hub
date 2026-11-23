@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>03 · Se connecter</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a>Événements</a></nav>
+  <div class="user"><a class="btn">Se connecter</a><a class="btn primary">Créer un compte</a></div>
+</header>
+<div class="page">
+<main>
+  <div class="card" style="max-width:440px;margin:24px auto">
+    <h1 style="margin-top:0">Se connecter</h1>
+    <div class="alert ok">Compte créé. Vous pouvez vous connecter.</div>
+    <div class="alert error">Email ou mot de passe incorrect.</div>
+
+    <label>Email</label>
+    <div class="input">ada@example.com</div>
+
+    <label>Mot de passe</label>
+    <div class="input">••••••••••••</div>
+
+    <div class="row" style="margin-top:20px">
+      <span class="btn primary disabled">Connexion…</span>
+      <span class="spacer"></span>
+      <a class="small">Pas de compte ? En créer un</a>
+    </div>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>Besoins · US02 (SCRUM-25)</h2>
+    <ul>
+      <li>Formulaire de connexion ; bouton désactivé pendant la requête.</li>
+      <li><code>401 INVALID_CREDENTIALS</code> : message générique (pas d'indication email/mot de passe).</li>
+      <li>Jeton envoyé en <code>Authorization: Bearer</code> sur les appels protégés.</li>
+      <li>Stockage du jeton à décider avec le back et documenter (risque XSS, US17).</li>
+      <li>Après succès : retour à la page d'origine, sinon catalogue.</li>
+      <li>Déconnexion depuis l'en-tête (suppression du jeton).</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>API</h2>
+    <ul>
+      <li>Action : <code>POST /auth/login</code> (A2) ; la réponse contient <code>user</code>, pas besoin d'appeler <code>/me</code>.</li>
+      <li>Rechargement de page : <code>GET /me</code> (A3) uniquement.</li>
+    </ul>
+  </div>
+</aside>
+</div>
+</body>
+</html>

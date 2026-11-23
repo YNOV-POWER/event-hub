@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>04 · Catalogue public</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a class="current">Événements</a><a>Mes inscriptions</a></nav>
+  <div class="user">Ada <span class="role">PARTICIPANT</span><a class="btn">Se déconnecter</a></div>
+</header>
+<div class="page">
+<main>
+  <h1>Événements à venir</h1>
+  <div class="card row">
+    <div class="input" style="flex:2">🔍 Rechercher (titre, description, lieu)</div>
+    <div class="input" style="flex:1">Catégories : Atelier, Concert ▾</div>
+    <div class="input" style="flex:1">Du 01/12/2026 au … ▾</div>
+    <div class="input" style="flex:1">Tri : date ↑ ▾</div>
+  </div>
+  <p class="muted small">134 événements · URL : <code>/events?q=type&amp;category=WORKSHOP,CONCERT&amp;sort=startsAt&amp;page=2</code></p>
+
+  <div class="grid">
+    <div class="event-card"><div class="img"></div><div class="body">
+      <span class="cat">WORKSHOP</span>
+      <h3>TypeScript Workshop</h3>
+      <div class="small muted">Mer. 10 déc. 2026 · 19:00 – 22:00</div>
+      <div class="small muted">Hub Central, Lyon</div>
+      <div class="row small" style="margin-top:8px"><span>Par Grace</span><span class="spacer"></span><b>12 places</b></div>
+    </div></div>
+    <div class="event-card"><div class="img"></div><div class="body">
+      <span class="cat">CONCERT</span>
+      <h3>Jazz au Transbordeur</h3>
+      <div class="small muted">Ven. 12 déc. 2026 · 20:30 – 23:30</div>
+      <div class="small muted">Le Transbordeur, Villeurbanne</div>
+      <div class="row small" style="margin-top:8px"><span>Par Linus</span><span class="spacer"></span><b style="color:#b91c1c">Complet</b></div>
+    </div></div>
+    <div class="event-card"><div class="img"></div><div class="body">
+      <span class="cat">CONFERENCE</span>
+      <h3>Conférence Accessibilité Web</h3>
+      <div class="small muted">Lun. 15 déc. 2026 · 09:00 – 17:00</div>
+      <div class="small muted">Ynov Campus, Lyon</div>
+      <div class="row small" style="margin-top:8px"><span>Par Grace</span><span class="spacer"></span><b>3 places</b></div>
+    </div></div>
+  </div>
+  <div class="pagination"><span>‹</span><span>1</span><span class="current">2</span><span>3</span><span>…</span><span>7</span><span>›</span></div>
+
+  <p class="states-title">États</p>
+  <div class="states">
+    <div class="card"><div class="skeleton" style="width:60%"></div><div class="skeleton"></div><div class="skeleton" style="width:80%"></div><div class="small muted">Chargement (squelettes)</div></div>
+    <div class="card state"><strong>Aucun événement</strong>Aucun résultat pour ces filtres.<br><br><a class="btn">Réinitialiser les filtres</a></div>
+    <div class="card state"><strong>Impossible de charger les événements</strong><br><a class="btn">Réessayer</a></div>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>Besoins · US09 (SCRUM-39)</h2>
+    <ul>
+      <li>Page publique (accessible sans compte).</li>
+      <li>Pagination offset ; page et tri conservés dans l'URL.</li>
+      <li>Un seul appel par changement de page, de tri ou de filtre.</li>
+      <li>États vide, chargement et erreur.</li>
+      <li>Dates affichées en heure locale (API en UTC).</li>
+      <li>« Complet » si <code>remainingSeats = 0</code>.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>US19 (SCRUM-56, Should)</h2>
+    <ul><li>Recherche <code>q</code> (2 à 100 car.), multi-catégories, état des filtres dans l'URL.</li></ul>
+  </div>
+  <div class="card">
+    <h2>API</h2>
+    <ul><li><code>GET /events?page&amp;pageSize&amp;sort&amp;from&amp;to&amp;category&amp;q</code> (E1)</li></ul>
+  </div>
+</aside>
+</div>
+</body>
+</html>

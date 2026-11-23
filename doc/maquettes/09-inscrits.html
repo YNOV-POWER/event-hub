@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>09 · Inscrits d'un événement</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a>Événements</a><a>Mes inscriptions</a><a class="current">Mes événements</a></nav>
+  <div class="user">Grace <span class="role org">ORGANIZER</span><a class="btn">Se déconnecter</a></div>
+</header>
+<div class="page">
+<main>
+  <a class="small">‹ Mes événements</a>
+  <div class="row" style="margin-top:8px"><h1 style="margin:0">Inscrits · TypeScript Workshop</h1><span class="spacer"></span><span class="btn">⬇ Exporter en CSV</span></div>
+  <p class="muted">10/12/2026 19:00 · Hub Central, Lyon · <span class="status PUBLISHED">PUBLIÉ</span></p>
+
+  <div class="row" style="margin-bottom:16px">
+    <div class="card" style="flex:1;margin:0"><div style="font-size:24px;font-weight:700">18 / 30</div><div class="muted small">Confirmés</div></div>
+    <div class="card" style="flex:1;margin:0"><div style="font-size:24px;font-weight:700">12</div><div class="muted small">Places restantes</div></div>
+    <div class="card" style="flex:1;margin:0"><div style="font-size:24px;font-weight:700">4</div><div class="muted small">Liste d'attente</div></div>
+  </div>
+
+  <table>
+    <tr><th>Nom</th><th>Email</th><th>Statut</th><th>Inscrit le</th></tr>
+    <tr><td>Ada</td><td>ada@example.com</td><td><span class="status CONFIRMED">CONFIRMÉ</span></td><td>20/11/2026 10:12</td></tr>
+    <tr><td>Alan</td><td>alan@example.com</td><td><span class="status CONFIRMED">CONFIRMÉ</span></td><td>20/11/2026 11:40</td></tr>
+    <tr><td>Margaret</td><td>margaret@example.com</td><td><span class="status WAITLISTED">ATTENTE · 1ʳᵉ</span></td><td>22/11/2026 08:03</td></tr>
+  </table>
+  <div class="pagination"><span class="current">1</span><span>2</span><span>›</span></div>
+
+  <p class="states-title">États</p>
+  <div class="states">
+    <div class="card"><div class="skeleton"></div><div class="skeleton"></div><div class="small muted">Chargement</div></div>
+    <div class="card state"><strong>Aucun inscrit pour l'instant</strong>Partagez le lien de l'événement.</div>
+    <div class="card state"><strong>403 · Accès refusé</strong>Seul l'organisateur de l'événement voit ses inscrits.</div>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>Besoins · US15 (SCRUM-50)</h2>
+    <ul>
+      <li>Liste des inscrits d'un événement.</li>
+      <li>Accès limité à l'organisateur propriétaire (403 sinon).</li>
+      <li>États vide et chargement.</li>
+      <li>L'email n'est visible que par l'organisateur propriétaire (contrat §1.1).</li>
+    </ul>
+  </div>
+  <div class="card"><h2>US23 (SCRUM-64, Should)</h2><ul><li>Bouton d'export CSV des inscrits.</li></ul></div>
+  <div class="card"><h2>API (Sprint 2)</h2><ul><li><code>GET /events/{id}/registrations</code></li></ul></div>
+</aside>
+</div>
+</body>
+</html>

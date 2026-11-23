@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>10 · Tableau de bord organisateur</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a>Événements</a><a>Mes inscriptions</a><a class="current">Mes événements</a></nav>
+  <div class="user">Grace <span class="role org">ORGANIZER</span><a class="btn">Se déconnecter</a></div>
+</header>
+<div class="page">
+<main>
+  <h1>Tableau de bord</h1>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="card"><div style="font-size:26px;font-weight:700">5</div><div class="muted small">Événements à venir</div></div>
+    <div class="card"><div style="font-size:26px;font-weight:700">2</div><div class="muted small">Brouillons</div></div>
+    <div class="card"><div style="font-size:26px;font-weight:700">74 %</div><div class="muted small">Taux de remplissage moyen</div></div>
+    <div class="card"><div style="font-size:26px;font-weight:700">9</div><div class="muted small">En liste d'attente</div></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Prochains événements</h3>
+    <table>
+      <tr><th>Titre</th><th>Date</th><th>Remplissage</th></tr>
+      <tr><td>TypeScript Workshop</td><td>10/12/2026</td><td><div style="height:8px;background:#e4e4e7;border-radius:4px"><div style="width:60%;height:100%;background:#27272a;border-radius:4px"></div></div></td></tr>
+      <tr><td>Conférence Accessibilité Web</td><td>15/12/2026</td><td><div style="height:8px;background:#e4e4e7;border-radius:4px"><div style="width:90%;height:100%;background:#27272a;border-radius:4px"></div></div></td></tr>
+    </table>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>US27 (SCRUM-71, Could)</h2>
+    <ul>
+      <li>Story non détaillée dans le backlog : contenu proposé, à valider avec le PO.</li>
+      <li>Aucun endpoint dédié dans le contrat v0.1 : agrégats calculables depuis E3, ou endpoint à créer côté back (SCRUM-70).</li>
+    </ul>
+  </div>
+</aside>
+</div>
+</body>
+</html>

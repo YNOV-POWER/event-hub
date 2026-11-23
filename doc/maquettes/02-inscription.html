@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>02 · Créer un compte</title><link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<header class="app">
+  <span class="logo">EventHub</span>
+  <nav><a>Événements</a></nav>
+  <div class="user"><a class="btn">Se connecter</a><a class="btn primary">Créer un compte</a></div>
+</header>
+<div class="page">
+<main>
+  <div class="card" style="max-width:440px;margin:24px auto">
+    <h1 style="margin-top:0">Créer un compte</h1>
+    <div class="alert error">Un compte existe déjà avec cet email. <a>Se connecter</a></div>
+
+    <label>Nom affiché</label>
+    <div class="input">Ada</div>
+    <div class="hint">2 à 80 caractères</div>
+
+    <label>Email</label>
+    <div class="input error">ada@example.com</div>
+    <div class="field-error">Cet email est déjà utilisé.</div>
+
+    <label>Mot de passe</label>
+    <div class="input error">••••••••</div>
+    <div class="field-error">12 caractères minimum (8/12).</div>
+
+    <div class="row" style="margin-top:20px">
+      <span class="btn primary">Créer mon compte</span>
+      <span class="spacer"></span>
+      <a class="small">Déjà un compte ? Se connecter</a>
+    </div>
+  </div>
+</main>
+<aside class="notes">
+  <div class="card">
+    <h2>Besoins · US01 (SCRUM-23)</h2>
+    <ul>
+      <li>Champs : <code>email</code>, <code>password</code>, <code>displayName</code>. Pas de champ rôle.</li>
+      <li>Validation client : mot de passe ≥ 12 caractères, displayName 2 à 80.</li>
+      <li>Erreurs serveur affichées par champ (<code>field</code>).</li>
+      <li>Message dédié pour <code>409 EMAIL_ALREADY_USED</code>.</li>
+      <li>Succès <code>201</code> → redirection vers la connexion avec bandeau « Compte créé ».</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>API</h2>
+    <ul><li>Chargement : aucun appel</li><li>Action : <code>POST /auth/register</code> (A1)</li></ul>
+  </div>
+</aside>
+</div>
+</body>
+</html>

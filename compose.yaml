@@ -41,5 +41,50 @@ services:
       - ./back/prisma:/app/prisma
       - ./back/openapi.yaml:/app/openapi.yaml
 
+  prism:
+    image: stoplight/prism:5
+    profiles: ["mock"]
+    command: ["mock", "-h", "0.0.0.0", "-p", "4010", "--multiprocess=false", "/spec/openapi.contract.yaml"]
+    ports:
+      - "${PRISM_PORT:-4010}:4010"
+    volumes:
+      - ./front/openapi.contract.yaml:/spec/openapi.contract.yaml:ro
+
+  front:
+    build:
+      context: ./front
+      target: dev
+    profiles: ["front"]
+    init: true
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: /api
+      API_EVENTS_BASE: ${API_EVENTS_BASE:-http://back:3000/api}
+      API_MOCK_BASE: ${API_MOCK_BASE:-http://prism:4010}
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "${FRONT_PORT:-3001}:3001"
+    depends_on:
+      - back
+    volumes:
+      - ./front/src:/app/src
+      - ./front/public:/app/public
+      - ./front/openapi.contract.yaml:/app/openapi.contract.yaml
+
+  storybook:
+    build:
+      context: ./front
+      target: dev
+    profiles: ["storybook"]
+    init: true
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${STORYBOOK_PORT:-6006}:6006"
+    command: ["npx", "storybook", "dev", "--host", "0.0.0.0", "-p", "6006", "--no-open"]
+    volumes:
+      - ./front/src:/app/src
+      - ./front/.storybook:/app/.storybook
+      - ./front/public:/app/public
+
 volumes:
   db-data:

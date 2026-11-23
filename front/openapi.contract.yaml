@@ -1,0 +1,688 @@
+openapi: 3.1.0
+info:
+  title: EventHub API (Contrat Front Atelier 6)
+  version: 0.1.0
+  description: |
+    Contrat OpenAPI 3.1 consommé par le Front (génération du client typé et mock Prism).
+
+    - **E1** `GET /events` et **E2** `GET /events/{id}` reprennent exactement `back/openapi.yaml`.
+    - **R1** `POST /events/{id}/registrations` (US11) et **A1** `POST /auth/register` (US01)
+      étendent le contrat pour l'Atelier 6 (formulaires d'inscription + erreurs 409 / 422),
+      servis par Prism tant que le Back réel ne les expose pas encore.
+
+    Toutes les erreurs suivent RFC 9457 (`application/problem+json`) avec `code`, `requestId` et `errors[]`.
+servers:
+  - url: /api
+tags:
+  - name: Events
+  - name: Registrations
+  - name: Auth
+paths:
+  /events:
+    get:
+      tags: [Events]
+      operationId: listEvents
+      summary: Catalogue public des événements (E1, US09)
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/Category"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Page d'événements publiés.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+              example:
+                data:
+                  - id: "00000000-0000-4000-8200-000000000001"
+                    title: "TypeScript Workshop"
+                    description: "Hands-on session: strict typing, generics and narrowing on a real codebase."
+                    category: "WORKSHOP"
+                    location: "Hub Central, 12 rue de la République, Lyon"
+                    startsAt: "2026-12-10T17:00:00.000Z"
+                    endsAt: "2026-12-10T20:00:00.000Z"
+                    capacity: 30
+                    confirmedCount: 18
+                    remainingSeats: 12
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000003"
+                    title: "Jazz au parc"
+                    description: "Trio acoustique en plein air. Places limitées."
+                    category: "CONCERT"
+                    location: "Kiosque du parc, Lyon 6e"
+                    startsAt: "2026-12-12T19:00:00.000Z"
+                    endsAt: "2026-12-12T21:00:00.000Z"
+                    capacity: 3
+                    confirmedCount: 3
+                    remainingSeats: 0
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000002"
+                      displayName: "Alan"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000002"
+                    title: "Conférence Web & Accessibilité"
+                    description: "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif."
+                    category: "CONFERENCE"
+                    location: "Centre des congrès, Lyon 6e"
+                    startsAt: "2026-12-15T08:00:00.000Z"
+                    endsAt: "2026-12-15T16:00:00.000Z"
+                    capacity: 200
+                    confirmedCount: 197
+                    remainingSeats: 3
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                meta:
+                  page: 1
+                  pageSize: 20
+                  totalItems: 3
+                  totalPages: 1
+        "400":
+          $ref: "#/components/responses/InvalidQueryParam"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}:
+    get:
+      tags: [Events]
+      operationId: getEvent
+      summary: Détail d'un événement (E2, US10)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: L'événement demandé.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/registrations:
+    post:
+      tags: [Registrations]
+      operationId: registerToEvent
+      summary: S'inscrire à un événement (US11, réservé Sprint 2 côté Back)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: Clé UUID anti double-soumission générée côté Front.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRegistrationRequest"
+      responses:
+        "201":
+          description: Inscription enregistrée.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RegistrationConflict"
+        "422":
+          $ref: "#/components/responses/RegistrationUnprocessable"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      operationId: registerAccount
+      summary: Créer un compte utilisateur (A1, US01)
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterAccountRequest"
+      responses:
+        "201":
+          description: Compte créé.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "409":
+          $ref: "#/components/responses/EmailAlreadyUsed"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  headers:
+    X-Request-Id:
+      description: Identifiant de corrélation de la requête.
+      schema:
+        type: string
+        example: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000000000
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    From:
+      name: from
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2026-12-01T00:00:00Z"
+    To:
+      name: to
+      in: query
+      schema:
+        type: string
+        format: date-time
+    Category:
+      name: category
+      in: query
+      schema:
+        type: string
+      example: WORKSHOP,CONCERT
+    Q:
+      name: q
+      in: query
+      schema:
+        type: string
+        minLength: 2
+        maxLength: 100
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum: [startsAt, -startsAt, createdAt, -createdAt, title, -title]
+        default: startsAt
+
+  schemas:
+    EventCategory:
+      type: string
+      enum: [CONFERENCE, WORKSHOP, CONCERT, OTHER]
+    EventStatus:
+      type: string
+      enum: [DRAFT, PUBLISHED, CANCELLED]
+    UserRole:
+      type: string
+      enum: [PARTICIPANT, ORGANIZER]
+    RegistrationStatus:
+      type: string
+      enum: [CONFIRMED, WAITLISTED, CANCELLED]
+    OrganizerSummary:
+      type: object
+      required: [id, displayName]
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+    Event:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - category
+        - location
+        - startsAt
+        - endsAt
+        - capacity
+        - confirmedCount
+        - remainingSeats
+        - status
+        - organizer
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 3
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 5000
+        category:
+          $ref: "#/components/schemas/EventCategory"
+        location:
+          type: string
+          minLength: 1
+          maxLength: 200
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+        capacity:
+          type: integer
+          minimum: 1
+        confirmedCount:
+          type: integer
+          minimum: 0
+          readOnly: true
+        remainingSeats:
+          type: integer
+          readOnly: true
+        status:
+          $ref: "#/components/schemas/EventStatus"
+        organizer:
+          $ref: "#/components/schemas/OrganizerSummary"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: "00000000-0000-4000-8200-000000000001"
+        title: "TypeScript Workshop"
+        description: "Hands-on session: strict typing, generics and narrowing on a real codebase."
+        category: "WORKSHOP"
+        location: "Hub Central, 12 rue de la République, Lyon"
+        startsAt: "2026-12-10T17:00:00.000Z"
+        endsAt: "2026-12-10T20:00:00.000Z"
+        capacity: 30
+        confirmedCount: 18
+        remainingSeats: 12
+        status: "PUBLISHED"
+        organizer:
+          id: "00000000-0000-4000-8100-000000000001"
+          displayName: "Grace"
+        createdAt: "2026-11-16T09:05:00.000Z"
+        updatedAt: "2026-11-16T09:05:00.000Z"
+    PaginationMeta:
+      type: object
+      required: [page, pageSize, totalItems, totalPages]
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalItems:
+          type: integer
+        totalPages:
+          type: integer
+    EventListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+    EventResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Event"
+    CreateRegistrationRequest:
+      type: object
+      required: [participantName, email]
+      properties:
+        participantName:
+          type: string
+          minLength: 2
+          maxLength: 80
+        email:
+          type: string
+          format: email
+        notes:
+          type: string
+          maxLength: 300
+    Registration:
+      type: object
+      required: [id, eventId, status, position, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventId:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/RegistrationStatus"
+        position:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: "00000000-0000-4000-8300-000000000099"
+        eventId: "00000000-0000-4000-8200-000000000001"
+        status: "CONFIRMED"
+        position: null
+        createdAt: "2026-11-23T14:30:00.000Z"
+    RegistrationResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Registration"
+    RegisterAccountRequest:
+      type: object
+      required: [email, password, displayName]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 12
+        displayName:
+          type: string
+          minLength: 2
+          maxLength: 80
+    User:
+      type: object
+      required: [id, email, displayName, role, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        role:
+          $ref: "#/components/schemas/UserRole"
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: "00000000-0000-4000-8100-000000000099"
+        email: "ada@example.com"
+        displayName: "Ada"
+        role: "PARTICIPANT"
+        createdAt: "2026-11-23T14:30:00.000Z"
+    UserResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/User"
+    FieldError:
+      type: object
+      required: [field, code, message]
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+    ErrorCode:
+      type: string
+      enum:
+        - MALFORMED_REQUEST
+        - INVALID_QUERY_PARAM
+        - UNAUTHENTICATED
+        - INVALID_CREDENTIALS
+        - FORBIDDEN
+        - NOT_FOUND
+        - EMAIL_ALREADY_USED
+        - INVALID_STATE_TRANSITION
+        - EVENT_NOT_EDITABLE
+        - CAPACITY_BELOW_CONFIRMED
+        - ALREADY_REGISTERED
+        - EVENT_FULL
+        - REGISTRATION_CLOSED
+        - VALIDATION_FAILED
+        - TOO_MANY_REQUESTS
+        - INTERNAL_ERROR
+    Problem:
+      type: object
+      required: [type, title, status, detail, instance, code, requestId]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        requestId:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldError"
+
+  responses:
+    InvalidQueryParam:
+      description: Paramètre de query inconnu ou hors contraintes.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/invalid-query-param
+            title: Invalid query parameter
+            status: 400
+            detail: One or more query parameters are invalid.
+            instance: /api/events
+            code: INVALID_QUERY_PARAM
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+            errors:
+              - field: pageSize
+                code: MAX_VALUE
+                message: pageSize must be <= 100.
+    Unauthenticated:
+      description: Jeton absent, invalide ou expiré.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/unauthenticated
+            title: Authentication required
+            status: 401
+            detail: A valid bearer token is required.
+            instance: /api/events/00000000-0000-4000-8200-000000000001/registrations
+            code: UNAUTHENTICATED
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    NotFound:
+      description: Ressource introuvable ou non visible.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/not-found
+            title: Resource not found
+            status: 404
+            detail: Event not found.
+            instance: /api/events/00000000-0000-4000-8200-000000000010
+            code: NOT_FOUND
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    RegistrationConflict:
+      description: Conflit métier lors de l'inscription (complet ou déjà inscrit).
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          examples:
+            eventFull:
+              summary: Événement complet (EVENT_FULL)
+              value:
+                type: /problems/event-full
+                title: Event is full
+                status: 409
+                detail: No remaining seats for this event.
+                instance: /api/events/00000000-0000-4000-8200-000000000003/registrations
+                code: EVENT_FULL
+                requestId: req_event_full_01
+            alreadyRegistered:
+              summary: Déjà inscrit (ALREADY_REGISTERED)
+              value:
+                type: /problems/already-registered
+                title: Already registered
+                status: 409
+                detail: Participant is already registered for this event.
+                instance: /api/events/00000000-0000-4000-8200-000000000001/registrations
+                code: ALREADY_REGISTERED
+                requestId: req_already_reg_01
+    RegistrationUnprocessable:
+      description: Inscriptions closes ou validation refusée (422).
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          examples:
+            registrationClosed:
+              summary: Inscriptions closes (REGISTRATION_CLOSED)
+              value:
+                type: /problems/registration-closed
+                title: Registration closed
+                status: 422
+                detail: Registrations are closed for this event.
+                instance: /api/events/00000000-0000-4000-8200-000000000012/registrations
+                code: REGISTRATION_CLOSED
+                requestId: req_closed_01
+            validationFailed:
+              summary: Validation par champ (VALIDATION_FAILED)
+              value:
+                type: /problems/validation-failed
+                title: Validation failed
+                status: 422
+                detail: Request validation failed.
+                instance: /api/events/00000000-0000-4000-8200-000000000001/registrations
+                code: VALIDATION_FAILED
+                requestId: req_val_01
+                errors:
+                  - field: email
+                    code: INVALID_FORMAT
+                    message: email must be a valid email address.
+    EmailAlreadyUsed:
+      description: Adresse email déjà associée à un compte.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/email-already-used
+            title: Email already used
+            status: 409
+            detail: An account with this email already exists.
+            instance: /api/auth/register
+            code: EMAIL_ALREADY_USED
+            requestId: req_email_used_01
+    ValidationFailed:
+      description: Données refusées par la validation serveur.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/validation-failed
+            title: Validation failed
+            status: 422
+            detail: Request validation failed.
+            instance: /api/auth/register
+            code: VALIDATION_FAILED
+            requestId: req_val_auth_01
+            errors:
+              - field: password
+                code: MIN_LENGTH
+                message: password must contain at least 12 characters.
+    InternalError:
+      description: Erreur serveur interne.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/internal-error
+            title: Internal server error
+            status: 500
+            detail: An unexpected error occurred.
+            instance: /api/events
+            code: INTERNAL_ERROR
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b

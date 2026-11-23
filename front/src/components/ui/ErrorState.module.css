@@ -1,0 +1,118 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.iconCircle {
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.technical {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger-text);
+}
+
+.notFound {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.forbidden {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning-text);
+}
+
+.unauthorized {
+  background-color: var(--color-info-soft);
+  color: var(--color-info-text);
+}
+
+.overline {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+.title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-h2);
+  line-height: var(--leading-h2);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.description {
+  margin: 0 0 var(--space-4);
+  max-width: 520px;
+  font-size: var(--text-body-lg);
+  color: var(--color-text-muted);
+}
+
+.requestId {
+  margin: 0 0 var(--space-6);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-neutral-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.primaryLink,
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.primaryLink {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.primaryLink:hover {
+  background-color: var(--color-primary-hover);
+  text-decoration: none;
+}
+
+.secondaryLink {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.secondaryLink:hover {
+  background-color: var(--color-neutral-soft);
+  text-decoration: none;
+}

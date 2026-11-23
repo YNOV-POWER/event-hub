@@ -1,0 +1,12 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.requestId {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+}

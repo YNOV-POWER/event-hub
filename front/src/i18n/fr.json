@@ -1,0 +1,214 @@
+{
+  "app": {
+    "name": "EventHub",
+    "skipToContent": "Aller au contenu principal",
+    "footer": {
+      "copyright": "© 2026 EventHub · Ynov Lyon",
+      "legal": "Mentions légales",
+      "accessibility": "Accessibilité",
+      "contact": "Contact"
+    }
+  },
+  "nav": {
+    "mainLabel": "Navigation principale",
+    "events": "Événements",
+    "myRegistrations": "Mes inscriptions",
+    "newEvent": "Créer un événement",
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "logout": "Se déconnecter",
+    "roles": {
+      "PARTICIPANT": "Participant",
+      "ORGANIZER": "Organisateur"
+    }
+  },
+  "categories": {
+    "ALL": "Toutes",
+    "WORKSHOP": "Atelier",
+    "CONFERENCE": "Conférence",
+    "CONCERT": "Concert",
+    "OTHER": "Autre"
+  },
+  "statuses": {
+    "DRAFT": "Brouillon",
+    "PUBLISHED": "Publié",
+    "CANCELLED": "Annulé"
+  },
+  "catalogue": {
+    "overline": "Événements à venir",
+    "title": "Trouvez votre prochain événement",
+    "subtitle_one": "{{count}} événement publié.",
+    "subtitle_other": "{{count}} événements publiés.",
+    "searchLabel": "Rechercher un événement",
+    "searchPlaceholder": "Rechercher un événement, un lieu...",
+    "searchTooShort": "Saisissez au moins 2 caractères pour filtrer.",
+    "datePresetLabel": "Dates",
+    "datePresets": {
+      "upcoming": "À partir d'aujourd'hui",
+      "week": "7 prochains jours",
+      "month": "30 prochains jours",
+      "all": "Inclure les passés"
+    },
+    "sortLabel": "Trier par",
+    "sortOptions": {
+      "startsAt": "Date (plus proche)",
+      "-startsAt": "Date (plus lointaine)",
+      "title": "Titre (A → Z)",
+      "-title": "Titre (Z → A)",
+      "-createdAt": "Plus récents"
+    },
+    "categoryFilterLabel": "Filtrer par catégorie",
+    "resultsSummary_one": "{{count}} résultat · page {{page}} sur {{totalPages}}",
+    "resultsSummary_other": "{{count}} résultats · page {{page}} sur {{totalPages}}",
+    "resetFilters": "Réinitialiser les filtres",
+    "revalidating": "Mise à jour des données en cours…",
+    "emptyTitle": "Aucun événement",
+    "emptyDescription": "Aucun événement ne correspond à vos critères actuels.",
+    "emptyAction": "Réinitialiser les filtres",
+    "loadingAnnouncement": "Chargement des événements en cours"
+  },
+  "eventCard": {
+    "organizedBy": "Par {{name}}",
+    "full": "Complet",
+    "cancelled": "Annulé",
+    "seats_one": "{{count}} place",
+    "seats_other": "{{count}} places",
+    "viewDetails": "Voir les détails de {{title}}"
+  },
+  "pagination": {
+    "label": "Pagination des résultats",
+    "previous": "Page précédente",
+    "next": "Page suivante",
+    "page": "Page {{page}}"
+  },
+  "eventDetail": {
+    "backToCatalogue": "Retour au catalogue",
+    "aboutTitle": "À propos",
+    "noDescription": "Aucune description complémentaire pour cet événement.",
+    "organizedBy": "Organisé par {{name}}",
+    "organizerSubtitle": "Organisateur EventHub",
+    "timezoneNote": "heure locale",
+    "cancelledBannerTitle": "Cet événement est annulé.",
+    "cancelledBannerBody": "Les inscriptions ne sont plus possibles et les inscriptions existantes ont été annulées.",
+    "registrationCardTitle": "Inscription",
+    "freeBadge": "Gratuit",
+    "remainingSeats_one": "place restante sur {{capacity}}",
+    "remainingSeats_other": "places restantes sur {{capacity}}",
+    "confirmedParticipants_one": "{{count}} participant inscrit",
+    "confirmedParticipants_other": "{{count}} participants inscrits",
+    "addToCalendar": "Ajouter à mon calendrier (.ics)",
+    "unsubscribeNote": "Désinscription possible jusqu'au début de l'événement.",
+    "revalidating": "Actualisation des places…",
+    "notFoundOverline": "Erreur 404",
+    "notFoundTitle": "Événement introuvable",
+    "notFoundDescription": "Cet événement n'existe pas, a été supprimé ou n'est pas encore publié.",
+    "notFoundAction": "Retour au catalogue"
+  },
+  "eventRegistration": {
+    "participantNameLabel": "Nom complet",
+    "participantNamePlaceholder": "Ada Lovelace",
+    "emailLabel": "Adresse email",
+    "emailPlaceholder": "ada@example.com",
+    "notesLabel": "Remarque (optionnel)",
+    "notesPlaceholder": "Régime alimentaire, besoin d'accessibilité…",
+    "submit": "S'inscrire",
+    "submitting": "Inscription en cours…",
+    "fullButton": "Événement complet",
+    "closedButton": "Inscriptions closes",
+    "successTitle": "Inscription confirmée !",
+    "successBody": "Votre place pour cet événement est réservée.",
+    "waitlistTitle": "Inscrit·e sur liste d'attente",
+    "waitlistBody": "Vous êtes en position {{position}} sur la liste d'attente.",
+    "validation": {
+      "nameMin": "Le nom doit contenir au moins 2 caractères.",
+      "nameMax": "Le nom ne peut pas dépasser 80 caractères.",
+      "emailInvalid": "Veuillez saisir une adresse email valide.",
+      "notesMax": "La remarque ne peut pas dépasser 300 caractères."
+    }
+  },
+  "accountRegister": {
+    "brandOverline": "Bienvenue",
+    "brandTitle": "Tous les événements Ynov, au même endroit.",
+    "brandSubtitle": "Ateliers, conférences, concerts et meetups : inscrivez-vous en un clic et gérez vos places.",
+    "feature1": "Inscription en un clic",
+    "feature2": "Export vers votre agenda (.ics)",
+    "feature3": "Liste d'attente automatique",
+    "title": "Créer un compte",
+    "subtitle": "Gratuit, en moins d'une minute.",
+    "displayNameLabel": "Nom affiché",
+    "displayNamePlaceholder": "Ada",
+    "displayNameHint": "2 à 80 caractères",
+    "emailLabel": "Email",
+    "emailPlaceholder": "ada@example.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "12 caractères minimum",
+    "passwordHint": "12 caractères minimum ({{current}}/12)",
+    "submit": "Créer mon compte",
+    "submitting": "Création du compte…",
+    "alreadyAccount": "Déjà un compte ?",
+    "loginLink": "Se connecter",
+    "validation": {
+      "displayNameMin": "Le nom affiché doit contenir au moins 2 caractères.",
+      "displayNameMax": "Le nom affiché ne peut pas dépasser 80 caractères.",
+      "emailInvalid": "Veuillez saisir une adresse email valide.",
+      "passwordMin": "Le mot de passe doit contenir au moins 12 caractères."
+    }
+  },
+  "login": {
+    "title": "Se connecter",
+    "subtitle": "Accédez à vos inscriptions et à votre espace organisateur.",
+    "accountCreatedBanner": "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
+    "redirectNotice": "Connectez-vous pour accéder à la page demandée.",
+    "demoTitle": "Mode démonstration (US02 Back en attente)",
+    "demoParticipant": "Simuler session Participant (Ada)",
+    "demoOrganizer": "Simuler session Organisateur (Grace)",
+    "noAccount": "Pas encore de compte ?",
+    "registerLink": "Créer un compte"
+  },
+  "errors": {
+    "retry": "Réessayer",
+    "backHome": "Retour au catalogue",
+    "loginAction": "Se connecter",
+    "requestId": "Identifiant de requête : {{id}}",
+    "genericTitle": "Une erreur est survenue",
+    "genericDescription": "Impossible de traiter votre demande pour le moment. Veuillez réessayer.",
+    "networkTitle": "Connexion impossible",
+    "networkDescription": "Le serveur EventHub est injoignable. Vérifiez votre connexion ou que l'API est démarrée.",
+    "timeoutTitle": "Délai d'attente dépassé",
+    "timeoutDescription": "Le serveur a mis trop de temps à répondre. Veuillez réessayer.",
+    "unauthenticatedTitle": "Session expirée",
+    "unauthenticatedDescription": "Votre session a expiré ou vous devez être connecté·e pour effectuer cette action.",
+    "forbiddenTitle": "Accès refusé",
+    "forbiddenDescription": "Vous n'avez pas les droits nécessaires pour accéder à cette ressource.",
+    "notFoundTitle": "Ressource introuvable",
+    "notFoundDescription": "La ressource demandée n'existe pas ou n'est plus disponible.",
+    "codes": {
+      "MALFORMED_REQUEST": "La requête envoyée est mal formée.",
+      "INVALID_QUERY_PARAM": "Un ou plusieurs paramètres de recherche sont invalides.",
+      "UNAUTHENTICATED": "Authentification requise pour cette action.",
+      "INVALID_CREDENTIALS": "Identifiants incorrects.",
+      "FORBIDDEN": "Vous n'avez pas les permissions requises.",
+      "NOT_FOUND": "La ressource demandée est introuvable.",
+      "EMAIL_ALREADY_USED": "Un compte existe déjà avec cette adresse email.",
+      "ALREADY_REGISTERED": "Vous êtes déjà inscrit·e à cet événement.",
+      "EVENT_FULL": "Cet événement est complet : il ne reste plus aucune place disponible.",
+      "REGISTRATION_CLOSED": "Les inscriptions sont closes pour cet événement.",
+      "EVENT_NOT_EDITABLE": "Cet événement ne peut plus être modifié.",
+      "INVALID_STATE_TRANSITION": "Cette action n'est pas autorisée dans l'état actuel de l'événement.",
+      "CAPACITY_BELOW_CONFIRMED": "La capacité ne peut pas être inférieure au nombre d'inscrits confirmés.",
+      "VALIDATION_FAILED": "Certains champs du formulaire sont invalides. Vérifiez les erreurs ci-dessous.",
+      "TOO_MANY_REQUESTS": "Trop de requêtes effectuées. Merci de patienter avant de réessayer.",
+      "INTERNAL_ERROR": "Une erreur technique inattendue est survenue côté serveur."
+    }
+  },
+  "guard": {
+    "noteTitle": "Information de sécurité",
+    "clientGuardNote": "Les gardes Front améliorent l'expérience utilisateur ; le contrôle d'accès réel reste garanti par le Back (401 / 403)."
+  },
+  "placeholders": {
+    "myRegistrationsTitle": "Mes inscriptions",
+    "myRegistrationsBody": "Cette vue sera branchée sur GET /api/me/registrations au Sprint 2 (US14).",
+    "newEventTitle": "Créer un événement",
+    "newEventBody": "Réservé aux organisateurs — sera branché sur POST /api/events (US05)."
+  }
+}

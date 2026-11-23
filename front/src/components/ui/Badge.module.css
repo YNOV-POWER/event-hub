@@ -28,6 +28,11 @@
   color: var(--color-primary-text);
 }
 
+.accent {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
 .success {
   background-color: var(--color-success-soft);
   color: var(--color-success-text);

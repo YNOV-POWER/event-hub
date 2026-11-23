@@ -22,6 +22,10 @@ export const Full: Story = {
   args: { tone: "danger", dot: true, children: "Complet" },
 };
 
-export const CategoryPill: Story = {
-  args: { tone: "frosted", dot: true, dotColor: "#4F46E5", children: "Atelier" },
+export const CategoryConcert: Story = {
+  args: { tone: "accent", dot: true, dotColor: "#F97316", children: "Concert" },
+};
+
+export const CategoryWorkshop: Story = {
+  args: { tone: "primary", dot: true, dotColor: "#4F46E5", children: "Atelier" },
 };

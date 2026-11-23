@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { CalendarSearch } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "./Button";
 import styles from "./EmptyState.module.css";
 
@@ -23,7 +23,7 @@ export function EmptyState({
   return (
     <section className={styles.container} aria-live="polite">
       <div className={styles.iconCircle} aria-hidden="true">
-        {icon ?? <CalendarSearch size={32} />}
+        {icon ?? <Search size={28} />}
       </div>
       <h2 className={styles.title}>{title}</h2>
       <p className={styles.description}>{description}</p>

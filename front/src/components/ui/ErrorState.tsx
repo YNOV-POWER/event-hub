@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertOctagon, Lock, RefreshCw, SearchX, ShieldAlert } from "lucide-react";
+import { AlertOctagon, ChevronLeft, Lock, RefreshCw, Search, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "./Button";
 import styles from "./ErrorState.module.css";
@@ -18,13 +18,15 @@ export interface ErrorStateProps {
   readonly retryLabel?: string;
   readonly homeHref?: string;
   readonly homeLabel?: string;
+  readonly secondaryHref?: string;
+  readonly secondaryLabel?: string;
   readonly loginHref?: string;
   readonly loginLabel?: string;
 }
 
 const ICON_BY_VARIANT = {
   technical: AlertOctagon,
-  notFound: SearchX,
+  notFound: Search,
   forbidden: Lock,
   unauthorized: ShieldAlert,
 } as const;
@@ -39,19 +41,30 @@ export function ErrorState({
   retryLabel,
   homeHref,
   homeLabel,
+  secondaryHref,
+  secondaryLabel,
   loginHref,
   loginLabel,
 }: ErrorStateProps) {
   const { t } = useTranslation();
   const Icon = ICON_BY_VARIANT[variant];
+  const isNotFound = variant === "notFound";
 
   return (
-    <section role="alert" className={styles.container}>
-      <div className={`${styles.iconCircle} ${styles[variant]}`} aria-hidden="true">
-        <Icon size={36} />
+    <section
+      role="alert"
+      className={`${styles.container} ${isNotFound ? styles.canvas : styles.card}`.trim()}
+    >
+      <div
+        className={`${styles.iconCircle} ${styles[variant]} ${isNotFound ? styles.iconLarge : ""}`.trim()}
+        aria-hidden="true"
+      >
+        <Icon size={isNotFound ? 44 : 34} />
       </div>
       {overline ? <p className={styles.overline}>{overline}</p> : null}
-      <h1 className={styles.title}>{title}</h1>
+      <h1 className={`${styles.title} ${isNotFound ? styles.titleDisplay : ""}`.trim()}>
+        {title}
+      </h1>
       <p className={styles.description}>{description}</p>
       {requestId ? (
         <p className={styles.requestId}>{t("errors.requestId", { id: requestId })}</p>
@@ -72,12 +85,18 @@ export function ErrorState({
           <Link
             href={homeHref}
             className={
-              variant === "notFound" || variant === "forbidden"
+              isNotFound || variant === "forbidden"
                 ? styles.primaryLink
                 : styles.secondaryLink
             }
           >
-            {homeLabel ?? t("errors.backHome")}
+            {isNotFound ? <ChevronLeft size={16} aria-hidden="true" /> : null}
+            <span>{homeLabel ?? t("errors.backHome")}</span>
+          </Link>
+        ) : null}
+        {secondaryHref && secondaryLabel ? (
+          <Link href={secondaryHref} className={styles.secondaryLink}>
+            {secondaryLabel}
           </Link>
         ) : null}
       </div>

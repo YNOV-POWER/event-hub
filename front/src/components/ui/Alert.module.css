@@ -4,7 +4,8 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  border: none;
+  border-left: 4px solid transparent;
   font-size: var(--text-body);
   line-height: var(--leading-body);
 }
@@ -36,24 +37,24 @@
 
 .info {
   background-color: var(--color-info-soft);
-  border-color: #bae6fd;
+  border-left-color: var(--color-info);
   color: var(--color-info-text);
 }
 
 .success {
   background-color: var(--color-success-soft);
-  border-color: #bbf7d0;
+  border-left-color: var(--color-success);
   color: var(--color-success-text);
 }
 
 .warning {
   background-color: var(--color-warning-soft);
-  border-color: #fde68a;
+  border-left-color: var(--color-warning);
   color: var(--color-warning-text);
 }
 
 .danger {
   background-color: var(--color-danger-soft);
-  border-color: #fecaca;
+  border-left-color: var(--color-danger);
   color: var(--color-danger-text);
 }

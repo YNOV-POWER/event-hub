@@ -32,6 +32,13 @@
   box-shadow: 0 0 0 3px var(--color-primary-soft);
 }
 
+.input:disabled {
+  background-color: var(--color-neutral-soft);
+  border-color: var(--color-border);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
 .inputError {
   border-color: var(--color-danger);
 }

@@ -10,15 +10,23 @@
   color: var(--color-text);
 }
 
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .select {
   width: 100%;
   height: 44px;
-  padding: 0 var(--space-3);
+  padding: 0 38px 0 var(--space-3);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-strong);
   background-color: var(--color-surface);
   color: var(--color-text);
   font-size: var(--text-body);
+  appearance: none;
+  cursor: pointer;
   transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 
@@ -28,8 +36,28 @@
   box-shadow: 0 0 0 3px var(--color-primary-soft);
 }
 
+.select:disabled {
+  background-color: var(--color-neutral-soft);
+  border-color: var(--color-border);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
 .selectError {
   border-color: var(--color-danger);
+}
+
+.chevron {
+  position: absolute;
+  right: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
 }
 
 .error {

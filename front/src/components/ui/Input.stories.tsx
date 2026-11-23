@@ -40,3 +40,12 @@ export const WithError: Story = {
     error: "Un compte existe déjà avec cette adresse email.",
   },
 };
+
+export const Disabled: Story = {
+  args: {
+    label: "Email",
+    defaultValue: "ada@example.com",
+    hint: "Champ non modifiable",
+    disabled: true,
+  },
+};

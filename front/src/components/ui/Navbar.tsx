@@ -71,14 +71,23 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
                 <Avatar name={user.displayName} size="md" />
                 <div className={styles.userInfo}>
                   <span className={styles.userName}>{user.displayName}</span>
-                  <span className={styles.userRole}>{t(`nav.roles.${user.role}`)}</span>
+                  <span
+                    className={`${styles.userRole} ${
+                      user.role === "ORGANIZER" ? styles.userRoleOrganizer : ""
+                    }`.trim()}
+                  >
+                    {t(`nav.roles.${user.role}`)}
+                  </span>
                 </div>
               </div>
               {onSignOut ? (
-                <button type="button" className={styles.logoutButton} onClick={onSignOut}>
-                  <LogOut size={16} aria-hidden="true" />
-                  <span>{t("nav.logout")}</span>
-                </button>
+                <>
+                  <span className={styles.divider} aria-hidden="true" />
+                  <button type="button" className={styles.logoutButton} onClick={onSignOut}>
+                    <LogOut size={16} aria-hidden="true" />
+                    <span>{t("nav.logout")}</span>
+                  </button>
+                </>
               ) : null}
             </>
           ) : (

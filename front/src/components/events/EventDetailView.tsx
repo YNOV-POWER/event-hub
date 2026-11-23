@@ -2,13 +2,15 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Calendar, ChevronLeft, MapPin, User, Users } from "lucide-react";
+import { Calendar, CalendarPlus, ChevronLeft, MapPin, User, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { EventItem } from "@/api/client";
 import { Alert } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SyncIndicator } from "@/components/ui/SyncIndicator";
+import { downloadEventIcs } from "@/i18n/calendar";
 import { formatEventDetailDate } from "@/i18n/formatters";
 import { EventBanner } from "./EventBanner";
 import styles from "./EventDetailView.module.css";
@@ -130,6 +132,17 @@ export function EventDetailView({
             />
 
             {registrationSlot}
+
+            {!isCancelled ? (
+              <Button
+                variant="secondary"
+                fullWidth
+                leftIcon={<CalendarPlus size={16} aria-hidden="true" />}
+                onClick={() => downloadEventIcs(event)}
+              >
+                {t("eventDetail.addToCalendar")}
+              </Button>
+            ) : null}
 
             <p className={styles.note}>{t("eventDetail.unsubscribeNote")}</p>
           </div>

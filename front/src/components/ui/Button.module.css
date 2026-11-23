@@ -70,13 +70,27 @@
 }
 
 .danger {
-  background-color: var(--color-surface);
+  background-color: var(--color-danger);
   border-color: var(--color-danger);
-  color: var(--color-danger-text);
+  color: var(--color-on-primary);
 }
 
 .danger:hover:not(:disabled) {
-  background-color: var(--color-danger-soft);
+  background-color: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
+}
+
+.link {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-primary);
+  padding: 0 var(--space-1);
+  height: auto;
+}
+
+.link:hover:not(:disabled) {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
 }
 
 .spinner {

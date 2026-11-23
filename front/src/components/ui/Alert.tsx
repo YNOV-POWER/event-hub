@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import styles from "./Alert.module.css";
 
 export type AlertTone = "info" | "success" | "warning" | "danger";
@@ -16,7 +16,7 @@ const ICONS: Record<AlertTone, typeof Info> = {
   info: Info,
   success: CheckCircle2,
   warning: AlertTriangle,
-  danger: AlertCircle,
+  danger: XCircle,
 };
 
 export function Alert({

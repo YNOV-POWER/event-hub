@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { EventCategory, EventStatus } from "@/api/client";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import styles from "./EventBanner.module.css";
 
 export type EventBannerSize = "card" | "hero";
@@ -17,11 +17,11 @@ export interface EventBannerProps {
   readonly className?: string;
 }
 
-const CATEGORY_DOT_COLORS: Record<EventCategory, string> = {
-  WORKSHOP: "#4F46E5",
-  CONCERT: "#F97316",
-  CONFERENCE: "#0284C7",
-  OTHER: "#10B981",
+const CATEGORY_BADGE_STYLE: Record<EventCategory, { tone: BadgeTone; dotColor: string }> = {
+  WORKSHOP: { tone: "primary", dotColor: "#4F46E5" },
+  CONCERT: { tone: "accent", dotColor: "#F97316" },
+  CONFERENCE: { tone: "info", dotColor: "#0284C7" },
+  OTHER: { tone: "success", dotColor: "#16A34A" },
 };
 
 const GRADIENT_BY_CATEGORY: Record<EventCategory, string> = {
@@ -47,13 +47,14 @@ export function EventBanner({
   const gradientClass = isCancelled
     ? styles.cancelled
     : GRADIENT_BY_CATEGORY[category];
+  const categoryBadge = CATEGORY_BADGE_STYLE[category];
 
   return (
     <div
       className={`${styles.banner} ${styles[size]} ${gradientClass} ${className}`.trim()}
     >
       <div className={styles.badges}>
-        <Badge tone="frosted" dot dotColor={CATEGORY_DOT_COLORS[category]}>
+        <Badge tone={categoryBadge.tone} dot dotColor={categoryBadge.dotColor}>
           {t(`categories.${category}`)}
         </Badge>
         {showStatusBadge ? (

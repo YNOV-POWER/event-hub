@@ -14,6 +14,8 @@ export default function NotFoundPage() {
       description={t("eventDetail.notFoundDescription")}
       homeHref="/events"
       homeLabel={t("eventDetail.notFoundAction")}
+      secondaryHref="/me/registrations"
+      secondaryLabel={t("nav.myRegistrations")}
     />
   );
 }

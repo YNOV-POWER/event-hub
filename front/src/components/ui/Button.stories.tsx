@@ -22,6 +22,10 @@ export const Danger: Story = {
   args: { variant: "danger", children: "Me désinscrire" },
 };
 
+export const LinkVariant: Story = {
+  args: { variant: "link", children: "Réinitialiser les filtres" },
+};
+
 export const Loading: Story = {
   args: { variant: "primary", isLoading: true, children: "Inscription en cours…" },
 };

@@ -1,0 +1,12 @@
+.skeletonLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(300px, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .skeletonLayout {
+    grid-template-columns: 1fr;
+  }
+}

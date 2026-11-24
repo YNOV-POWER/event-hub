@@ -1,0 +1,48 @@
+.banner {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.card {
+  height: 152px;
+  padding: var(--space-3);
+}
+
+.hero {
+  height: 280px;
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+}
+
+.badges {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.right {
+  flex-shrink: 0;
+}
+
+.workshop {
+  background: var(--gradient-workshop);
+}
+
+.concert {
+  background: var(--gradient-concert);
+}
+
+.conference {
+  background: var(--gradient-conference);
+}
+
+.other {
+  background: var(--gradient-other);
+}
+
+.cancelled {
+  background: var(--gradient-cancelled);
+}

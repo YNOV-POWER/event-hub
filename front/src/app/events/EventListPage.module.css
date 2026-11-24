@@ -1,0 +1,39 @@
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: var(--space-6);
+}
+
+.overline {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-overline);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: var(--text-body-lg);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+  }
+}

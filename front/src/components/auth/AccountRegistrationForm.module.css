@@ -1,0 +1,30 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.alertLink {
+  font-weight: 700;
+  color: var(--color-danger-text);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.passwordGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footerText {
+  margin: var(--space-2) 0 0;
+  text-align: center;
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+
+.footerLink {
+  font-weight: 600;
+  color: var(--color-primary);
+}

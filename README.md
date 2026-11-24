@@ -135,7 +135,7 @@ npm run build
 ├── back/                                 # API Express 5 + Prisma 7 + OpenAPI (`back/README.md`)
 ├── front/                                # App Next.js 16 + Storybook 10 (`front/README.md`)
 ├── doc/
-│   ├── maquettes/                        # Wireframes HTML basse fidélité
+│   ├── maquettes/                        # Maquettes : captures Figma + wireframes HTML
 │   ├── 2026-11-20_backend-init-report.md # Compte rendu initialisation Back
 │   └── 2026-11-23_front-atelier-6-report.md # Compte rendu Front (Atelier 6) et écarts Sprint 2
 └── .github/workflows/front-ci.yml        # CI Front + publication Storybook sur GitHub Pages

@@ -1,4 +1,4 @@
-/* Wireframes basse fidélité EventHub : gris, sans charte graphique définitive. */
+/* Maquettes EventHub : wireframes HTML (structure) + captures Figma (référence visuelle). */
 * { box-sizing: border-box; }
 body { margin: 0; font: 14px/1.45 system-ui, -apple-system, sans-serif; color: #222; background: #f4f4f5; }
 a { color: #1d4ed8; }
@@ -78,3 +78,8 @@ code { font: 12px ui-monospace, Menlo, monospace; background: #f4f4f5; padding: 
 
 .modal-backdrop { background: rgba(0,0,0,.35); border-radius: 8px; padding: 32px; }
 .modal { background: #fff; border-radius: 8px; padding: 20px; max-width: 420px; margin: auto; }
+
+/* Référence Figma en tête de chaque écran */
+.figma-ref img { display: block; max-width: 100%; height: auto; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; margin-bottom: 12px; }
+img.thumb { display: block; width: 180px; height: auto; border: 1px solid #d4d4d8; border-radius: 4px; }
+img.figma-mobile { display: block; max-width: 100%; height: auto; border: 1px solid #d4d4d8; border-radius: 8px; }

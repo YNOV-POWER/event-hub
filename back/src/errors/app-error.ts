@@ -48,3 +48,17 @@ export class InvalidQueryParamError extends AppError {
     this.name = "InvalidQueryParamError";
   }
 }
+
+export class ValidationError extends AppError {
+  constructor(errors: readonly FieldError[]) {
+    super(400, "VALIDATION_FAILED", "The request body is invalid.", errors);
+    this.name = "ValidationError";
+  }
+}
+
+export class EmailAlreadyUsedError extends AppError {
+  constructor() {
+    super(409, "EMAIL_ALREADY_USED", "An account with this email already exists.");
+    this.name = "EmailAlreadyUsedError";
+  }
+}

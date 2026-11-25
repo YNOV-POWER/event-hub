@@ -91,14 +91,14 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
               ) : null}
             </>
           ) : (
-            <>
+            <div className={styles.guestActions}>
               <Link href="/login" className={styles.loginLink}>
                 {t("nav.login")}
               </Link>
               <Link href="/register" className={styles.registerButton}>
                 {t("nav.register")}
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef, useId, type InputHTMLAttributes } from "react";
-import { AlertTriangle } from "lucide-react";
+import { Icon } from "./Icon";
 import styles from "./Input.module.css";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -35,7 +35,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       />
       {error ? (
         <p id={errorId} role="alert" className={styles.error}>
-          <AlertTriangle size={14} aria-hidden="true" />
+          <Icon name="alert" size={14} />
           <span>{error}</span>
         </p>
       ) : null}

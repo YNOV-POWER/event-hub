@@ -1,11 +1,10 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 20px;
 }
 
 .alertLink {
-  font-weight: 700;
   color: var(--color-danger-text);
   text-decoration: underline;
   white-space: nowrap;
@@ -17,14 +16,19 @@
   gap: var(--space-2);
 }
 
-.footerText {
-  margin: var(--space-2) 0 0;
-  text-align: center;
+.switch {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 6px;
   font-size: var(--text-body);
+  line-height: 1.5;
   color: var(--color-text-muted);
 }
 
-.footerLink {
+.switchLink {
   font-weight: 600;
   color: var(--color-primary);
 }

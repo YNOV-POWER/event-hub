@@ -1,0 +1,141 @@
+.card {
+  display: flex;
+  margin: 24px 0 16px;
+  overflow: hidden;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3xl);
+  box-shadow: var(--shadow-auth);
+}
+
+.brandPanel {
+  flex: 0 0 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding: var(--space-12);
+  color: var(--color-on-primary);
+  background: linear-gradient(
+    var(--auth-gradient-angle),
+    var(--color-primary) 0%,
+    var(--color-brand-end) 71.429%
+  );
+}
+
+.register {
+  --auth-gradient-angle: 118.917deg;
+}
+
+.login {
+  --auth-gradient-angle: 126.296deg;
+}
+
+.brandTop {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.overline {
+  margin: 0;
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-primary-soft);
+}
+
+.brandTitle {
+  margin: 0;
+  max-width: 420px;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.brandSubtitle {
+  margin: 0;
+  max-width: 400px;
+  font-size: var(--text-body-lg);
+  line-height: 1.5;
+  color: var(--color-primary-soft);
+}
+
+.benefits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.benefitIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.formPanel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 56px 96px;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 38px;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 23px;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 1200px) {
+  .brandPanel {
+    flex-basis: 44%;
+  }
+  .formPanel {
+    padding: var(--space-12) var(--space-8);
+  }
+}
+
+@media (max-width: 820px) {
+  .card {
+    margin: 0;
+  }
+  .brandPanel {
+    display: none;
+  }
+  .formPanel {
+    padding: var(--space-8) var(--space-6);
+  }
+}

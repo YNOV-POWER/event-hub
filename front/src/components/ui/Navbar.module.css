@@ -9,7 +9,7 @@
 
 .inner {
   height: 100%;
-  max-width: var(--container-max);
+  max-width: calc(var(--container-max) + 2 * var(--space-6));
   margin: 0 auto;
   padding: 0 var(--space-6);
   display: flex;
@@ -21,7 +21,7 @@
 .left {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: 40px;
 }
 
 .brand {
@@ -30,7 +30,7 @@
   gap: 10px;
   color: var(--color-text);
   font-weight: 700;
-  font-size: 1.0625rem;
+  font-size: 1.1875rem;
   text-decoration: none;
 }
 
@@ -41,14 +41,14 @@
 .logoMark {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-md);
+  border-radius: 9px;
   background: var(--gradient-brand);
   color: var(--color-on-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1.0625rem;
 }
 
 .brandName {
@@ -89,7 +89,18 @@
   gap: var(--space-4);
 }
 
+.guestActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .loginLink {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-text-muted);
@@ -105,11 +116,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
-  padding: 0 var(--space-4);
+  height: 44px;
+  padding: 0 18px;
   border-radius: var(--radius-md);
   background-color: var(--color-primary);
+  box-shadow: var(--shadow-button);
   color: var(--color-on-primary);
+  white-space: nowrap;
   font-size: var(--text-body);
   font-weight: 600;
   text-decoration: none;
@@ -177,6 +190,24 @@
 @media (max-width: 768px) {
   .inner {
     padding: 0 var(--space-4);
+  }
+  .left {
+    gap: var(--space-6);
+  }
+  .brand {
+    font-size: 1.0625rem;
+  }
+  .guestActions {
+    gap: var(--space-4);
+  }
+  .loginLink {
+    height: auto;
+    padding: 0;
+  }
+  .registerButton {
+    height: 40px;
+    padding: 0 var(--space-4);
+    white-space: normal;
   }
   .userInfo {
     display: none;

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
+import { Icon, type IconName } from "./Icon";
 import styles from "./Alert.module.css";
 
 export type AlertTone = "info" | "success" | "warning" | "danger";
@@ -12,11 +12,11 @@ export interface AlertProps {
   readonly className?: string;
 }
 
-const ICONS: Record<AlertTone, typeof Info> = {
-  info: Info,
-  success: CheckCircle2,
-  warning: AlertTriangle,
-  danger: XCircle,
+const ICONS: Record<AlertTone, IconName> = {
+  info: "info",
+  success: "checkCircle",
+  warning: "alert",
+  danger: "xCircle",
 };
 
 export function Alert({
@@ -26,12 +26,14 @@ export function Alert({
   children,
   className = "",
 }: AlertProps) {
-  const Icon = ICONS[tone];
   const role = tone === "danger" || tone === "warning" ? "alert" : "status";
+  const classes = [styles.alert, styles[tone], title ? styles.withTitle : "", className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div role={role} className={`${styles.alert} ${styles[tone]} ${className}`.trim()}>
-      <Icon className={styles.icon} size={18} aria-hidden="true" />
+    <div role={role} className={classes}>
+      <Icon name={ICONS[tone]} className={styles.icon} />
       <div className={styles.body}>
         {title ? <strong className={styles.title}>{title}</strong> : null}
         <div className={styles.message}>{children}</div>

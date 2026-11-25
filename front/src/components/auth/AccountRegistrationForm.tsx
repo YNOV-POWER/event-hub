@@ -12,7 +12,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { StrengthMeter } from "@/components/ui/StrengthMeter";
-import styles from "./AccountRegistrationForm.module.css";
+import styles from "./AuthForm.module.css";
 
 const KNOWN_FIELDS = new Set<keyof RegisterAccountDto>([
   "displayName",
@@ -51,8 +51,8 @@ export function AccountRegistrationForm({
         displayName: z
           .string()
           .trim()
-          .min(2, t("accountRegister.validation.displayNameMin"))
-          .max(80, t("accountRegister.validation.displayNameMax")),
+          .min(2, t("accountRegister.validation.displayNameLength"))
+          .max(80, t("accountRegister.validation.displayNameLength")),
         email: z.string().trim().email(t("accountRegister.validation.emailInvalid")),
         password: z.string().min(12, t("accountRegister.validation.passwordMin")),
       }),
@@ -75,7 +75,10 @@ export function AccountRegistrationForm({
   useEffect(() => {
     if (!serverError) return;
     if (serverError.status === 409 && serverError.code === "EMAIL_ALREADY_USED") {
-      setError("email", { type: "server", message: t("errors.codes.EMAIL_ALREADY_USED") });
+      setError("email", {
+        type: "server",
+        message: t("accountRegister.validation.emailAlreadyUsed"),
+      });
       return;
     }
     if (serverError.status === 422) {
@@ -147,13 +150,19 @@ export function AccountRegistrationForm({
         <StrengthMeter level={getPasswordLevel(passwordValue.length)} />
       </div>
 
-      <Button type="submit" variant="primary" fullWidth isLoading={isSubmitting}>
+      <Button
+        type="submit"
+        variant="primary"
+        fullWidth
+        disabled={isSubmitting}
+        aria-busy={isSubmitting || undefined}
+      >
         {isSubmitting ? t("accountRegister.submitting") : t("accountRegister.submit")}
       </Button>
 
-      <p className={styles.footerText}>
-        {t("accountRegister.alreadyAccount")}{" "}
-        <Link href="/login" className={styles.footerLink}>
+      <p className={styles.switch}>
+        <span>{t("accountRegister.alreadyAccount")}</span>
+        <Link href="/login" className={styles.switchLink}>
           {t("accountRegister.loginLink")}
         </Link>
       </p>

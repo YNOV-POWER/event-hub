@@ -138,7 +138,9 @@ npm run build
 │   ├── maquettes/                        # Maquettes : captures Figma + wireframes HTML
 │   ├── 2026-11-20_backend-init-report.md # Compte rendu initialisation Back
 │   └── 2026-11-23_front-atelier-6-report.md # Compte rendu Front (Atelier 6) et écarts Sprint 2
-└── .github/workflows/front-ci.yml        # CI Front + publication Storybook sur GitHub Pages
+└── .github/workflows/
+    ├── front-ci.yml                      # CI Front + publication Storybook sur GitHub Pages
+    └── back-ci.yml                       # CI Back : lint, typecheck, build, migrations + seed sur PostgreSQL 18
 ```
 
 ## Documentation complémentaire

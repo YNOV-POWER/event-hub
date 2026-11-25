@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FilterX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { EventCategory, EventSort } from "@/api/client";
 import { Chip } from "@/components/ui/Chip";
+import { Icon } from "@/components/ui/Icon";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { Select } from "@/components/ui/Select";
 import { SyncIndicator } from "@/components/ui/SyncIndicator";
@@ -153,7 +153,7 @@ export function FilterBar({
 
         {isFiltered ? (
           <button type="button" className={styles.resetButton} onClick={onReset}>
-            <FilterX size={15} aria-hidden="true" />
+            <Icon name="filterX" size={15} />
             <span>{t("catalogue.resetFilters")}</span>
           </button>
         ) : null}

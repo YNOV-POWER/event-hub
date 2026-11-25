@@ -1,36 +1,4 @@
 .icon {
   display: inline-block;
   flex-shrink: 0;
-  background-color: currentColor;
-  mask-position: center;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
-}
-
-.alert {
-  mask-image: url("../../assets/icons/alert.svg");
-}
-
-.calendarPlus {
-  mask-image: url("../../assets/icons/calendarPlus.svg");
-}
-
-.check {
-  mask-image: url("../../assets/icons/check.svg");
-}
-
-.checkCircle {
-  mask-image: url("../../assets/icons/checkCircle.svg");
-}
-
-.hourglass {
-  mask-image: url("../../assets/icons/hourglass.svg");
-}
-
-.info {
-  mask-image: url("../../assets/icons/info.svg");
-}
-
-.xCircle {
-  mask-image: url("../../assets/icons/xCircle.svg");
 }

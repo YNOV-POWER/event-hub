@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import type { TFunction } from "i18next";
-import { Clock, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { EventItem } from "@/api/client";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { CalendarChip } from "@/components/ui/CalendarChip";
+import { Icon } from "@/components/ui/Icon";
 import { formatCalendarChip, formatEventCardDateRange } from "@/i18n/formatters";
 import { EventBanner } from "./EventBanner";
 import styles from "./EventCard.module.css";
@@ -69,11 +69,11 @@ export function EventCard({ event, href }: EventCardProps) {
 
           <div className={styles.metaList}>
             <p className={styles.metaItem}>
-              <Clock size={14} className={styles.metaIcon} aria-hidden="true" />
+              <Icon name="clock" size={14} className={styles.metaIcon} />
               <span>{dateRange}</span>
             </p>
             <p className={styles.metaItem}>
-              <MapPin size={14} className={styles.metaIcon} aria-hidden="true" />
+              <Icon name="mapPin" size={14} className={styles.metaIcon} />
               <span className={styles.location}>{event.location}</span>
             </p>
           </div>

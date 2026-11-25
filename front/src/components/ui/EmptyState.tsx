@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { Button } from "./Button";
+import { Icon } from "./Icon";
 import styles from "./EmptyState.module.css";
 
 export interface EmptyStateProps {
@@ -26,7 +26,7 @@ export function EmptyState({
   return (
     <section className={styles.container} aria-live="polite">
       <div className={styles.iconCircle} aria-hidden="true">
-        {icon ?? <Search size={28} />}
+        {icon ?? <Icon name="search" size={28} />}
       </div>
       <h2 className={styles.title}>{title}</h2>
       <p className={styles.description}>{description}</p>

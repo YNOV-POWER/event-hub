@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { Icon } from "./Icon";
 import styles from "./SyncIndicator.module.css";
 
 export interface SyncIndicatorProps {
@@ -16,7 +16,7 @@ export function SyncIndicator({ label, className = "" }: SyncIndicatorProps) {
       role="status"
       aria-live="polite"
     >
-      <RefreshCw size={13} className={styles.spin} aria-hidden="true" />
+      <Icon name="refreshCw" size={13} className={styles.spin} />
       <span>{label}</span>
     </span>
   );

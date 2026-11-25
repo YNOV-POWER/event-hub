@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, type SelectHTMLAttributes } from "react";
-import { AlertTriangle, ChevronDown } from "lucide-react";
+import { Icon } from "./Icon";
 import styles from "./Select.module.css";
 
 export interface SelectOption {
@@ -50,11 +50,11 @@ export function Select({
             </option>
           ))}
         </select>
-        <ChevronDown size={16} className={styles.chevron} aria-hidden="true" />
+        <Icon name="chevronDown" size={16} className={styles.chevron} />
       </div>
       {error ? (
         <p id={errorId} role="alert" className={styles.error}>
-          <AlertTriangle size={14} aria-hidden="true" />
+          <Icon name="alert" size={14} />
           <span>{error}</span>
         </p>
       ) : null}

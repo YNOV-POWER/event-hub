@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { UserRole } from "@/api/client";
 import { Avatar } from "./Avatar";
+import { Icon } from "./Icon";
 import styles from "./Navbar.module.css";
 
 export interface NavbarUser {
@@ -84,7 +84,7 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
                 <>
                   <span className={styles.divider} aria-hidden="true" />
                   <button type="button" className={styles.logoutButton} onClick={onSignOut}>
-                    <LogOut size={16} aria-hidden="true" />
+                    <Icon name="logOut" size={16} />
                     <span>{t("nav.logout")}</span>
                   </button>
                 </>

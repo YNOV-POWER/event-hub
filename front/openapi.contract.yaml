@@ -174,6 +174,131 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /events/{id}/registrations/me:
+    delete:
+      tags: [Registrations]
+      operationId: cancelMyRegistration
+      summary: Se désinscrire d'un événement ou quitter la liste d'attente (US13, réservé Sprint 2)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Désinscription effectuée.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /me/registrations:
+    get:
+      tags: [Registrations]
+      operationId: listMyRegistrations
+      summary: Liste des inscriptions de l'utilisateur connecté (US14, réservé Sprint 2)
+      description: |
+        Retourne les inscriptions (à venir et passées) de l'utilisateur authentifié avec un résumé
+        embarqué de chaque événement pour servir l'écran « Mes inscriptions » en un seul appel.
+      responses:
+        "200":
+          description: Inscriptions de l'utilisateur connecté.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyRegistrationsResponse"
+              example:
+                data:
+                  - id: "00000000-0000-4000-8300-000000000001"
+                    eventId: "00000000-0000-4000-8200-000000000001"
+                    status: "CONFIRMED"
+                    position: null
+                    promotedAt: null
+                    createdAt: "2026-11-18T10:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000001"
+                      title: "TypeScript Workshop"
+                      description: "Hands-on session: strict typing, generics and narrowing on a real codebase."
+                      category: "WORKSHOP"
+                      location: "Hub Central, Lyon"
+                      startsAt: "2026-12-10T18:00:00.000Z"
+                      endsAt: "2026-12-10T21:00:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000003"
+                    eventId: "00000000-0000-4000-8200-000000000003"
+                    status: "CONFIRMED"
+                    position: null
+                    promotedAt: "2026-11-24T16:20:00.000Z"
+                    createdAt: "2026-11-19T09:15:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000003"
+                      title: "Jazz au parc"
+                      description: "Trio acoustique en plein air. Places limitées."
+                      category: "CONCERT"
+                      location: "Kiosque du parc, Lyon 6e"
+                      startsAt: "2026-12-12T19:30:00.000Z"
+                      endsAt: "2026-12-12T22:30:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000006"
+                    eventId: "00000000-0000-4000-8200-000000000002"
+                    status: "WAITLISTED"
+                    position: 3
+                    promotedAt: null
+                    createdAt: "2026-11-20T14:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000002"
+                      title: "Conférence Web & Accessibilité"
+                      description: "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif."
+                      category: "CONFERENCE"
+                      location: "Centre des congrès, Lyon 6e"
+                      startsAt: "2026-12-15T08:00:00.000Z"
+                      endsAt: "2026-12-15T16:00:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000010"
+                    eventId: "00000000-0000-4000-8200-000000000013"
+                    status: "CONFIRMED"
+                    position: null
+                    promotedAt: null
+                    createdAt: "2026-09-20T12:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000013"
+                      title: "Retour d'expérience Kubernetes"
+                      description: "Événement passé."
+                      category: "CONFERENCE"
+                      location: "Centre des congrès, Lyon 6e"
+                      startsAt: "2026-10-02T16:30:00.000Z"
+                      endsAt: "2026-10-02T19:30:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000009"
+                    eventId: "00000000-0000-4000-8200-000000000012"
+                    status: "CANCELLED"
+                    position: null
+                    promotedAt: null
+                    createdAt: "2026-09-01T10:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000012"
+                      title: "Concert d'hiver"
+                      description: "Annulé pour raisons techniques."
+                      category: "CONCERT"
+                      location: "Salle des fêtes, Villeurbanne"
+                      startsAt: "2026-09-14T12:00:00.000Z"
+                      endsAt: "2026-09-14T14:00:00.000Z"
+                      status: "CANCELLED"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /auth/register:
     post:
       tags: [Auth]
@@ -438,6 +563,60 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/Registration"
+    MyRegistrationEventSummary:
+      type: object
+      required: [id, title, description, category, location, startsAt, endsAt, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          $ref: "#/components/schemas/EventCategory"
+        location:
+          type: string
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/EventStatus"
+    MyRegistrationItem:
+      type: object
+      required: [id, eventId, status, position, promotedAt, createdAt, event]
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventId:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/RegistrationStatus"
+        position:
+          type: ["integer", "null"]
+        promotedAt:
+          type: ["string", "null"]
+          format: date-time
+          description: "Horodatage de promotion automatique depuis la liste d'attente (US21), null sinon."
+        createdAt:
+          type: string
+          format: date-time
+        event:
+          $ref: "#/components/schemas/MyRegistrationEventSummary"
+    MyRegistrationsResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MyRegistrationItem"
     RegisterAccountRequest:
       type: object
       required: [email, password, displayName]

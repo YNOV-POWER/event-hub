@@ -213,6 +213,52 @@
     "noteTitle": "Information de sécurité",
     "clientGuardNote": "Les gardes Front améliorent l'expérience utilisateur ; le contrôle d'accès réel reste garanti par le Back (401 / 403)."
   },
+  "myRegistrations": {
+    "title": "Mes inscriptions",
+    "subtitle": "Retrouvez vos événements à venir et passés.",
+    "tabsLabel": "Filtrer par période",
+    "upcomingTab": "À venir",
+    "pastTab": "Passées",
+    "pastSectionTitle": "Passées",
+    "loadingAnnouncement": "Chargement de vos inscriptions en cours",
+    "revalidating": "Mise à jour de vos inscriptions…",
+    "promotionBanner": "Bonne nouvelle : une place s'est libérée, vous êtes inscrit·e à « {{title}} ».",
+    "promotionAction": "Voir l'événement",
+    "status": {
+      "confirmed": "Confirmée",
+      "waitlisted": "Attente · {{ordinal}}",
+      "attended": "Participé",
+      "cancelled": "Annulé"
+    },
+    "actions": {
+      "ics": ".ics",
+      "icsAriaLabel": "Ajouter « {{title}} » au calendrier (.ics)",
+      "unsubscribe": "Se désinscrire",
+      "leaveWaitlist": "Quitter la liste",
+      "viewEvent": "Voir les détails de {{title}}"
+    },
+    "emptyTitle": "Aucune inscription",
+    "emptyDescription": "Parcourez le catalogue pour trouver un événement qui vous plaît.",
+    "emptyPastTitle": "Aucune inscription passée",
+    "emptyPastDescription": "Vos événements terminés ou annulés apparaîtront ici.",
+    "emptyAction": "Voir les événements",
+    "loadError": "Impossible de charger vos inscriptions.",
+    "confirmModal": {
+      "unsubscribeTitle": "Se désinscrire de « {{title}} » ?",
+      "unsubscribeDescription": "Votre place sera libérée pour un autre participant.",
+      "unsubscribeConfirm": "Me désinscrire",
+      "leaveWaitlistTitle": "Quitter la liste d'attente pour « {{title}} » ?",
+      "leaveWaitlistDescription": "Vous perdrez votre position dans la liste d'attente.",
+      "leaveWaitlistConfirm": "Quitter la liste",
+      "cancel": "Annuler",
+      "submitting": "Annulation…"
+    },
+    "toast": {
+      "unsubscribed": "Vous êtes désinscrit·e de « {{title}} ».",
+      "leftWaitlist": "Vous avez quitté la liste d'attente pour « {{title}} ».",
+      "close": "Fermer la notification"
+    }
+  },
   "placeholders": {
     "myRegistrationsTitle": "Mes inscriptions",
     "myRegistrationsBody": "Cette vue sera branchée sur GET /api/me/registrations au Sprint 2 (US14).",

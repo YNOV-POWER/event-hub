@@ -1,4 +1,9 @@
-import type { EventItem, EventListResponse } from "@/api/client";
+import type {
+  EventItem,
+  EventListResponse,
+  MyRegistrationItem,
+  MyRegistrationsResponse,
+} from "@/api/client";
 
 /**
  * Jeux de données alignés sur `back/prisma/seed.ts` (UUIDs déterministes et catégories du contrat).
@@ -125,4 +130,109 @@ export const MOCK_EVENT_LIST_RESPONSE: EventListResponse = {
     totalItems: 4,
     totalPages: 1,
   },
+};
+
+export const MOCK_MY_REGISTRATIONS: readonly MyRegistrationItem[] = [
+  {
+    id: "00000000-0000-4000-8300-000000000001",
+    eventId: "00000000-0000-4000-8200-000000000001",
+    status: "CONFIRMED",
+    position: null,
+    promotedAt: null,
+    createdAt: "2026-11-18T10:00:00.000Z",
+    event: {
+      id: "00000000-0000-4000-8200-000000000001",
+      title: "TypeScript Workshop",
+      description:
+        "Hands-on session: strict typing, generics and narrowing on a real codebase.",
+      category: "WORKSHOP",
+      location: "Hub Central, Lyon",
+      startsAt: "2026-12-10T18:00:00.000Z",
+      endsAt: "2026-12-10T21:00:00.000Z",
+      status: "PUBLISHED",
+    },
+  },
+  {
+    id: "00000000-0000-4000-8300-000000000003",
+    eventId: "00000000-0000-4000-8200-000000000003",
+    status: "CONFIRMED",
+    position: null,
+    promotedAt: "2026-11-24T16:20:00.000Z",
+    createdAt: "2026-11-19T09:15:00.000Z",
+    event: {
+      id: "00000000-0000-4000-8200-000000000003",
+      title: "Jazz au parc",
+      description: "Trio acoustique en plein air. Places limitées.",
+      category: "CONCERT",
+      location: "Kiosque du parc, Lyon 6e",
+      startsAt: "2026-12-12T19:30:00.000Z",
+      endsAt: "2026-12-12T22:30:00.000Z",
+      status: "PUBLISHED",
+    },
+  },
+  {
+    id: "00000000-0000-4000-8300-000000000006",
+    eventId: "00000000-0000-4000-8200-000000000002",
+    status: "WAITLISTED",
+    position: 3,
+    promotedAt: null,
+    createdAt: "2026-11-20T14:00:00.000Z",
+    event: {
+      id: "00000000-0000-4000-8200-000000000002",
+      title: "Conférence Web & Accessibilité",
+      description:
+        "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif.",
+      category: "CONFERENCE",
+      location: "Centre des congrès, Lyon 6e",
+      startsAt: "2026-12-15T08:00:00.000Z",
+      endsAt: "2026-12-15T16:00:00.000Z",
+      status: "PUBLISHED",
+    },
+  },
+  {
+    id: "00000000-0000-4000-8300-000000000010",
+    eventId: "00000000-0000-4000-8200-000000000013",
+    status: "CONFIRMED",
+    position: null,
+    promotedAt: null,
+    createdAt: "2026-09-20T12:00:00.000Z",
+    event: {
+      id: "00000000-0000-4000-8200-000000000013",
+      title: "Retour d'expérience Kubernetes",
+      description: "Événement passé.",
+      category: "CONFERENCE",
+      location: "Centre des congrès, Lyon 6e",
+      startsAt: "2026-10-02T16:30:00.000Z",
+      endsAt: "2026-10-02T19:30:00.000Z",
+      status: "PUBLISHED",
+    },
+  },
+  {
+    id: "00000000-0000-4000-8300-000000000009",
+    eventId: "00000000-0000-4000-8200-000000000012",
+    status: "CANCELLED",
+    position: null,
+    promotedAt: null,
+    createdAt: "2026-09-01T10:00:00.000Z",
+    event: {
+      id: "00000000-0000-4000-8200-000000000012",
+      title: "Concert d'hiver",
+      description: "Annulé pour raisons techniques.",
+      category: "CONCERT",
+      location: "Salle des fêtes, Villeurbanne",
+      startsAt: "2026-09-14T12:00:00.000Z",
+      endsAt: "2026-09-14T14:00:00.000Z",
+      status: "CANCELLED",
+    },
+  },
+];
+
+export const CONFIRMED_REGISTRATION = MOCK_MY_REGISTRATIONS[0]!;
+export const PROMOTED_REGISTRATION = MOCK_MY_REGISTRATIONS[1]!;
+export const WAITLISTED_REGISTRATION = MOCK_MY_REGISTRATIONS[2]!;
+export const PAST_ATTENDED_REGISTRATION = MOCK_MY_REGISTRATIONS[3]!;
+export const PAST_CANCELLED_REGISTRATION = MOCK_MY_REGISTRATIONS[4]!;
+
+export const MOCK_MY_REGISTRATIONS_RESPONSE: MyRegistrationsResponse = {
+  data: [...MOCK_MY_REGISTRATIONS],
 };

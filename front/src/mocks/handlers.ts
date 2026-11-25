@@ -1,5 +1,9 @@
 import { delay, http, HttpResponse } from "msw";
-import { MOCK_EVENTS, MOCK_EVENT_LIST_RESPONSE } from "./fixtures";
+import {
+  MOCK_EVENTS,
+  MOCK_EVENT_LIST_RESPONSE,
+  MOCK_MY_REGISTRATIONS_RESPONSE,
+} from "./fixtures";
 
 /**
  * Handlers MSW v2 utilisés dans Storybook et les tests de composants connectés.
@@ -117,6 +121,16 @@ export const defaultHandlers = [
     );
   }),
 
+  http.get("*/api/me/registrations", async () => {
+    await delay(120);
+    return HttpResponse.json(MOCK_MY_REGISTRATIONS_RESPONSE);
+  }),
+
+  http.delete("*/api/events/:id/registrations/me", async () => {
+    await delay(150);
+    return new HttpResponse(null, { status: 204 });
+  }),
+
   http.post("*/api/auth/register", async ({ request }) => {
     await delay(150);
     const body = (await request.json()) as {
@@ -183,3 +197,37 @@ export const listSuccessHandler = http.get("*/api/events", async () => {
   await delay(100);
   return HttpResponse.json(MOCK_EVENT_LIST_RESPONSE);
 });
+
+export const myRegistrationsSuccessHandler = http.get("*/api/me/registrations", async () => {
+  await delay(100);
+  return HttpResponse.json(MOCK_MY_REGISTRATIONS_RESPONSE);
+});
+
+export const myRegistrationsEmptyHandler = http.get("*/api/me/registrations", async () => {
+  await delay(100);
+  return HttpResponse.json({ data: [] });
+});
+
+export const myRegistrationsErrorHandler = http.get("*/api/me/registrations", async () => {
+  await delay(100);
+  return HttpResponse.json(
+    {
+      type: "/problems/internal-error",
+      title: "Internal server error",
+      status: 500,
+      detail: "Unable to load registrations.",
+      instance: "/api/me/registrations",
+      code: "INTERNAL_ERROR",
+      requestId: "req_msw_my_reg_500",
+    },
+    { status: 500, headers: { "Content-Type": "application/problem+json" } },
+  );
+});
+
+export const cancelRegistrationSuccessHandler = http.delete(
+  "*/api/events/:id/registrations/me",
+  async () => {
+    await delay(120);
+    return new HttpResponse(null, { status: 204 });
+  },
+);

@@ -55,6 +55,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/{id}/registrations/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Se désinscrire d'un événement ou quitter la liste d'attente (US13, réservé Sprint 2) */
+        delete: operations["cancelMyRegistration"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/registrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Liste des inscriptions de l'utilisateur connecté (US14, réservé Sprint 2)
+         * @description Retourne les inscriptions (à venir et passées) de l'utilisateur authentifié avec un résumé
+         *     embarqué de chaque événement pour servir l'écran « Mes inscriptions » en un seul appel.
+         */
+        get: operations["listMyRegistrations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/register": {
         parameters: {
             query?: never;
@@ -171,6 +209,38 @@ export interface components {
         };
         RegistrationResponse: {
             data: components["schemas"]["Registration"];
+        };
+        MyRegistrationEventSummary: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            description: string;
+            category: components["schemas"]["EventCategory"];
+            location: string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt: string;
+            status: components["schemas"]["EventStatus"];
+        };
+        MyRegistrationItem: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            eventId: string;
+            status: components["schemas"]["RegistrationStatus"];
+            position: number | null;
+            /**
+             * Format: date-time
+             * @description Horodatage de promotion automatique depuis la liste d'attente (US21), null sinon.
+             */
+            promotedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            event: components["schemas"]["MyRegistrationEventSummary"];
+        };
+        MyRegistrationsResponse: {
+            data: components["schemas"]["MyRegistrationItem"][];
         };
         RegisterAccountRequest: {
             /** Format: email */
@@ -553,6 +623,149 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["RegistrationConflict"];
             422: components["responses"]["RegistrationUnprocessable"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    cancelMyRegistration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Désinscription effectuée. */
+            204: {
+                headers: {
+                    "X-Request-Id": components["headers"]["X-Request-Id"];
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    listMyRegistrations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Inscriptions de l'utilisateur connecté. */
+            200: {
+                headers: {
+                    "X-Request-Id": components["headers"]["X-Request-Id"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "id": "00000000-0000-4000-8300-000000000001",
+                     *           "eventId": "00000000-0000-4000-8200-000000000001",
+                     *           "status": "CONFIRMED",
+                     *           "position": null,
+                     *           "promotedAt": null,
+                     *           "createdAt": "2026-11-18T10:00:00.000Z",
+                     *           "event": {
+                     *             "id": "00000000-0000-4000-8200-000000000001",
+                     *             "title": "TypeScript Workshop",
+                     *             "description": "Hands-on session: strict typing, generics and narrowing on a real codebase.",
+                     *             "category": "WORKSHOP",
+                     *             "location": "Hub Central, Lyon",
+                     *             "startsAt": "2026-12-10T18:00:00.000Z",
+                     *             "endsAt": "2026-12-10T21:00:00.000Z",
+                     *             "status": "PUBLISHED"
+                     *           }
+                     *         },
+                     *         {
+                     *           "id": "00000000-0000-4000-8300-000000000003",
+                     *           "eventId": "00000000-0000-4000-8200-000000000003",
+                     *           "status": "CONFIRMED",
+                     *           "position": null,
+                     *           "promotedAt": "2026-11-24T16:20:00.000Z",
+                     *           "createdAt": "2026-11-19T09:15:00.000Z",
+                     *           "event": {
+                     *             "id": "00000000-0000-4000-8200-000000000003",
+                     *             "title": "Jazz au parc",
+                     *             "description": "Trio acoustique en plein air. Places limitées.",
+                     *             "category": "CONCERT",
+                     *             "location": "Kiosque du parc, Lyon 6e",
+                     *             "startsAt": "2026-12-12T19:30:00.000Z",
+                     *             "endsAt": "2026-12-12T22:30:00.000Z",
+                     *             "status": "PUBLISHED"
+                     *           }
+                     *         },
+                     *         {
+                     *           "id": "00000000-0000-4000-8300-000000000006",
+                     *           "eventId": "00000000-0000-4000-8200-000000000002",
+                     *           "status": "WAITLISTED",
+                     *           "position": 3,
+                     *           "promotedAt": null,
+                     *           "createdAt": "2026-11-20T14:00:00.000Z",
+                     *           "event": {
+                     *             "id": "00000000-0000-4000-8200-000000000002",
+                     *             "title": "Conférence Web & Accessibilité",
+                     *             "description": "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif.",
+                     *             "category": "CONFERENCE",
+                     *             "location": "Centre des congrès, Lyon 6e",
+                     *             "startsAt": "2026-12-15T08:00:00.000Z",
+                     *             "endsAt": "2026-12-15T16:00:00.000Z",
+                     *             "status": "PUBLISHED"
+                     *           }
+                     *         },
+                     *         {
+                     *           "id": "00000000-0000-4000-8300-000000000010",
+                     *           "eventId": "00000000-0000-4000-8200-000000000013",
+                     *           "status": "CONFIRMED",
+                     *           "position": null,
+                     *           "promotedAt": null,
+                     *           "createdAt": "2026-09-20T12:00:00.000Z",
+                     *           "event": {
+                     *             "id": "00000000-0000-4000-8200-000000000013",
+                     *             "title": "Retour d'expérience Kubernetes",
+                     *             "description": "Événement passé.",
+                     *             "category": "CONFERENCE",
+                     *             "location": "Centre des congrès, Lyon 6e",
+                     *             "startsAt": "2026-10-02T16:30:00.000Z",
+                     *             "endsAt": "2026-10-02T19:30:00.000Z",
+                     *             "status": "PUBLISHED"
+                     *           }
+                     *         },
+                     *         {
+                     *           "id": "00000000-0000-4000-8300-000000000009",
+                     *           "eventId": "00000000-0000-4000-8200-000000000012",
+                     *           "status": "CANCELLED",
+                     *           "position": null,
+                     *           "promotedAt": null,
+                     *           "createdAt": "2026-09-01T10:00:00.000Z",
+                     *           "event": {
+                     *             "id": "00000000-0000-4000-8200-000000000012",
+                     *             "title": "Concert d'hiver",
+                     *             "description": "Annulé pour raisons techniques.",
+                     *             "category": "CONCERT",
+                     *             "location": "Salle des fêtes, Villeurbanne",
+                     *             "startsAt": "2026-09-14T12:00:00.000Z",
+                     *             "endsAt": "2026-09-14T14:00:00.000Z",
+                     *             "status": "CANCELLED"
+                     *           }
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["MyRegistrationsResponse"];
+                };
+            };
+            401: components["responses"]["Unauthenticated"];
             500: components["responses"]["InternalError"];
         };
     };

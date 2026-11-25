@@ -5,8 +5,8 @@
 
 .segment {
   height: 4px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-border);
+  border-radius: 2px;
+  background-color: var(--color-neutral-soft);
   transition: background-color 150ms ease;
 }
 

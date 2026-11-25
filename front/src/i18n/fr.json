@@ -3,7 +3,7 @@
     "name": "EventHub",
     "skipToContent": "Aller au contenu principal",
     "footer": {
-      "copyright": "© 2026 EventHub · Ynov Lyon",
+      "copyright": "© 2026 EventHub · Ynov Connect",
       "legal": "Mentions légales",
       "accessibility": "Accessibilité",
       "contact": "Contact"
@@ -126,13 +126,15 @@
       "notesMax": "La remarque ne peut pas dépasser 300 caractères."
     }
   },
+  "authLayout": {
+    "overline": "Bienvenue",
+    "title": "Tous les événements Ynov, au même endroit.",
+    "subtitle": "Ateliers, conférences, concerts et meetups : inscrivez-vous en un clic et gérez vos places.",
+    "benefitOneClick": "Inscription en un clic",
+    "benefitCalendar": "Export vers votre agenda (.ics)",
+    "benefitWaitlist": "Liste d'attente automatique"
+  },
   "accountRegister": {
-    "brandOverline": "Bienvenue",
-    "brandTitle": "Tous les événements Ynov, au même endroit.",
-    "brandSubtitle": "Ateliers, conférences, concerts et meetups : inscrivez-vous en un clic et gérez vos places.",
-    "feature1": "Inscription en un clic",
-    "feature2": "Export vers votre agenda (.ics)",
-    "feature3": "Liste d'attente automatique",
     "title": "Créer un compte",
     "subtitle": "Gratuit, en moins d'une minute.",
     "displayNameLabel": "Nom affiché",
@@ -148,22 +150,28 @@
     "alreadyAccount": "Déjà un compte ?",
     "loginLink": "Se connecter",
     "validation": {
-      "displayNameMin": "Le nom affiché doit contenir au moins 2 caractères.",
-      "displayNameMax": "Le nom affiché ne peut pas dépasser 80 caractères.",
+      "displayNameLength": "Entre 2 et 80 caractères.",
       "emailInvalid": "Veuillez saisir une adresse email valide.",
+      "emailAlreadyUsed": "Cet email est déjà utilisé.",
       "passwordMin": "Le mot de passe doit contenir au moins 12 caractères."
     }
   },
   "login": {
     "title": "Se connecter",
-    "subtitle": "Accédez à vos inscriptions et à votre espace organisateur.",
-    "accountCreatedBanner": "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
-    "redirectNotice": "Connectez-vous pour accéder à la page demandée.",
-    "demoTitle": "Mode démonstration (US02 Back en attente)",
-    "demoParticipant": "Simuler session Participant (Ada)",
-    "demoOrganizer": "Simuler session Organisateur (Grace)",
-    "noAccount": "Pas encore de compte ?",
-    "registerLink": "Créer un compte"
+    "subtitle": "Heureux de vous revoir !",
+    "accountCreatedBanner": "Compte créé. Vous pouvez vous connecter.",
+    "redirectNotice": "Connectez-vous pour accéder à « {{page}} ».",
+    "redirectNoticeGeneric": "Connectez-vous pour accéder à la page demandée.",
+    "emailLabel": "Email",
+    "passwordLabel": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "noAccount": "Pas de compte ?",
+    "registerLink": "En créer un",
+    "validation": {
+      "emailInvalid": "Veuillez saisir une adresse email valide.",
+      "passwordRequired": "Veuillez saisir votre mot de passe."
+    }
   },
   "errors": {
     "retry": "Réessayer",
@@ -186,10 +194,10 @@
       "MALFORMED_REQUEST": "La requête envoyée est mal formée.",
       "INVALID_QUERY_PARAM": "Un ou plusieurs paramètres de recherche sont invalides.",
       "UNAUTHENTICATED": "Authentification requise pour cette action.",
-      "INVALID_CREDENTIALS": "Identifiants incorrects.",
+      "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
       "FORBIDDEN": "Vous n'avez pas les permissions requises.",
       "NOT_FOUND": "La ressource demandée est introuvable.",
-      "EMAIL_ALREADY_USED": "Un compte existe déjà avec cette adresse email.",
+      "EMAIL_ALREADY_USED": "Un compte existe déjà avec cet email.",
       "ALREADY_REGISTERED": "Vous êtes déjà inscrit·e à cet événement.",
       "EVENT_FULL": "Cet événement est complet : il ne reste plus aucune place disponible.",
       "REGISTRATION_CLOSED": "Les inscriptions sont closes pour cet événement.",

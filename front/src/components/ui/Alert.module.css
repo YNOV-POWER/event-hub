@@ -1,18 +1,18 @@
 .alert {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   border: none;
   border-left: 4px solid transparent;
   font-size: var(--text-body);
-  line-height: var(--leading-body);
+  font-weight: 500;
+  line-height: 1.5;
 }
 
-.icon {
-  flex-shrink: 0;
-  margin-top: 2px;
+.withTitle {
+  align-items: flex-start;
 }
 
 .body {
@@ -33,6 +33,7 @@
 .action {
   flex-shrink: 0;
   align-self: center;
+  font-weight: 600;
 }
 
 .info {
@@ -41,10 +42,18 @@
   color: var(--color-info-text);
 }
 
+.info .icon {
+  color: var(--color-info);
+}
+
 .success {
   background-color: var(--color-success-soft);
   border-left-color: var(--color-success);
   color: var(--color-success-text);
+}
+
+.success .icon {
+  color: var(--color-success);
 }
 
 .warning {
@@ -53,8 +62,16 @@
   color: var(--color-warning-text);
 }
 
+.warning .icon {
+  color: var(--color-warning);
+}
+
 .danger {
   background-color: var(--color-danger-soft);
   border-left-color: var(--color-danger);
   color: var(--color-danger-text);
+}
+
+.danger .icon {
+  color: var(--color-danger);
 }

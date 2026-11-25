@@ -75,6 +75,13 @@ export function formatCalendarChip(startsAtIso: string): { month: string; day: s
 }
 
 /**
+ * Formate une position en ordinal français : 1 -> "1ʳᵉ", 2 -> "2ᵉ", 3 -> "3ᵉ".
+ */
+export function formatOrdinalFr(position: number): string {
+  return position === 1 ? "1ʳᵉ" : `${position}ᵉ`;
+}
+
+/**
  * Retourne 1 à 2 initiales pour un nom d'organisateur ou d'utilisateur.
  */
 export function getInitials(displayName: string): string {

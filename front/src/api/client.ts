@@ -14,6 +14,9 @@ export type EventResponse = components["schemas"]["EventResponse"];
 export type CreateRegistrationDto = components["schemas"]["CreateRegistrationRequest"];
 export type Registration = components["schemas"]["Registration"];
 export type RegistrationResponse = components["schemas"]["RegistrationResponse"];
+export type MyRegistrationEventSummary = components["schemas"]["MyRegistrationEventSummary"];
+export type MyRegistrationItem = components["schemas"]["MyRegistrationItem"];
+export type MyRegistrationsResponse = components["schemas"]["MyRegistrationsResponse"];
 export type RegisterAccountDto = components["schemas"]["RegisterAccountRequest"];
 export type User = components["schemas"]["User"];
 export type UserResponse = components["schemas"]["UserResponse"];
@@ -75,6 +78,21 @@ export const api = {
       body: dto,
       idempotencyKey: options.idempotencyKey ?? generateUuid(),
       headers,
+    });
+  },
+
+  /** US13 — DELETE /events/{id}/registrations/me (operationId: cancelMyRegistration) */
+  cancelMyRegistration(eventId: string): Promise<void> {
+    return http<void>(`/events/${encodeURIComponent(eventId)}/registrations/me`, {
+      method: "DELETE",
+    });
+  },
+
+  /** US14 — GET /me/registrations (operationId: listMyRegistrations) */
+  listMyRegistrations(signal?: AbortSignal): Promise<MyRegistrationsResponse> {
+    return http<MyRegistrationsResponse>("/me/registrations", {
+      method: "GET",
+      signal,
     });
   },
 

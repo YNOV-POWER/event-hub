@@ -23,8 +23,16 @@ const nextConfig: NextConfig = {
     return [
       // Routes Sprint 2 / Auth non encore exposées côté Back réel -> Prism
       {
+        source: "/api/events/:id/registrations/me",
+        destination: `${apiMockBase}/events/:id/registrations/me`,
+      },
+      {
         source: "/api/events/:id/registrations",
         destination: `${apiMockBase}/events/:id/registrations`,
+      },
+      {
+        source: "/api/me/registrations",
+        destination: `${apiMockBase}/me/registrations`,
       },
       {
         source: "/api/auth/:path*",

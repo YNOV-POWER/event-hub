@@ -1,21 +1,14 @@
-"use client";
-
-import { useTranslation } from "react-i18next";
+import { Suspense } from "react";
 import { RouteGuard } from "@/auth/RouteGuard";
-import { Alert } from "@/components/ui/Alert";
+import { SkeletonRow } from "@/components/ui/SkeletonRow";
+import { MyRegistrationsPage } from "./MyRegistrationsPage";
 
-export default function MyRegistrationsPage() {
-  const { t } = useTranslation();
-
+export default function MyRegistrationsRoutePage() {
   return (
     <RouteGuard>
-      <section>
-        <h1>{t("placeholders.myRegistrationsTitle")}</h1>
-        <p>{t("placeholders.myRegistrationsBody")}</p>
-        <Alert tone="info" title={t("guard.noteTitle")}>
-          {t("guard.clientGuardNote")}
-        </Alert>
-      </section>
+      <Suspense fallback={<SkeletonRow count={3} />}>
+        <MyRegistrationsPage />
+      </Suspense>
     </RouteGuard>
   );
 }

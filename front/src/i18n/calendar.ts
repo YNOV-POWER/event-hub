@@ -1,4 +1,11 @@
-import type { EventItem } from "@/api/client";
+export interface CalendarEventInput {
+  readonly id: string;
+  readonly title: string;
+  readonly location: string;
+  readonly startsAt: string;
+  readonly endsAt: string;
+  readonly description?: string;
+}
 
 function formatIcsDateUtc(iso: string): string {
   const date = new Date(iso);
@@ -14,7 +21,7 @@ function escapeIcsText(value: string): string {
     .replace(/\r?\n/g, "\\n");
 }
 
-export function buildEventIcsContent(event: EventItem): string {
+export function buildEventIcsContent(event: CalendarEventInput): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -26,14 +33,14 @@ export function buildEventIcsContent(event: EventItem): string {
     `DTEND:${formatIcsDateUtc(event.endsAt)}`,
     `SUMMARY:${escapeIcsText(event.title)}`,
     `LOCATION:${escapeIcsText(event.location)}`,
-    `DESCRIPTION:${escapeIcsText(event.description)}`,
+    `DESCRIPTION:${escapeIcsText(event.description ?? "")}`,
     "END:VEVENT",
     "END:VCALENDAR",
   ];
   return `${lines.join("\r\n")}\r\n`;
 }
 
-export function downloadEventIcs(event: EventItem): void {
+export function downloadEventIcs(event: CalendarEventInput): void {
   const blob = new Blob([buildEventIcsContent(event)], {
     type: "text/calendar;charset=utf-8",
   });

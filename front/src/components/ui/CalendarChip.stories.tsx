@@ -21,3 +21,11 @@ export const January: Story = {
 export const May: Story = {
   args: { month: "MAI", day: "24" },
 };
+
+export const SoftUpcoming: Story = {
+  args: { month: "DÉC", day: "10", tone: "soft", size: "md" },
+};
+
+export const MutedPast: Story = {
+  args: { month: "OCT", day: "02", tone: "muted", size: "md" },
+};

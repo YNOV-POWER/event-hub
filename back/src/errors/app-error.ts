@@ -51,7 +51,7 @@ export class InvalidQueryParamError extends AppError {
 
 export class ValidationError extends AppError {
   constructor(errors: readonly FieldError[]) {
-    super(400, "VALIDATION_FAILED", "The request body is invalid.", errors);
+    super(422, "VALIDATION_FAILED", "Request validation failed.", errors);
     this.name = "ValidationError";
   }
 }
@@ -60,5 +60,12 @@ export class EmailAlreadyUsedError extends AppError {
   constructor() {
     super(409, "EMAIL_ALREADY_USED", "An account with this email already exists.");
     this.name = "EmailAlreadyUsedError";
+  }
+}
+
+export class InvalidCredentialsError extends AppError {
+  constructor() {
+    super(401, "INVALID_CREDENTIALS", "Email or password is incorrect.");
+    this.name = "InvalidCredentialsError";
   }
 }

@@ -27,6 +27,7 @@ services:
     environment:
       PORT: 3000
       DATABASE_URL: postgresql://${POSTGRES_USER:-eventhub}:${POSTGRES_PASSWORD:-eventhub}@db:5432/${POSTGRES_DB:-eventhub}
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-in-production-please}
       # File events from the host do not reach the container through the bind mount (Docker Desktop on macOS):
       # make the watcher bundled in `tsx watch` poll instead.
       CHOKIDAR_USEPOLLING: "true"

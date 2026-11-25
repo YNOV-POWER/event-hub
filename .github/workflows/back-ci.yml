@@ -1,0 +1,66 @@
+name: Back CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "back/**"
+      - ".github/workflows/back-ci.yml"
+  pull_request:
+    paths:
+      - "back/**"
+      - ".github/workflows/back-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: back-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, Typecheck, Build & Migrations
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back
+
+    services:
+      db:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: eventhub
+          POSTGRES_PASSWORD: eventhub
+          POSTGRES_DB: eventhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U eventhub -d eventhub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Ephemeral database of the `db` service above, destroyed with the job.
+      DATABASE_URL: postgresql://eventhub:eventhub@localhost:5432/eventhub
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: back/package-lock.json
+
+      - run: npm ci
+      - run: npm run prisma:generate
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+
+      # Migrations and seed must apply on a fresh PostgreSQL 18, as in the Docker image.
+      - run: npm run db:deploy
+      - run: npm run db:seed

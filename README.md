@@ -150,3 +150,4 @@ npm run build
 - Contrat d'API : [`api-contract-v0.md`](api-contract-v0.md)
 - Compte rendu : [`doc/`](doc/)
 - Suivi Jira : [`Cours/Jira.md`](Cours/Jira.md)
+- Maquette Figma : [`maquette`](https://www.figma.com/design/iZapxMt0XEq0lr9vDvjWIj/Event-hub?node-id=1-2598&t=WGXYzkp8GINI1k30-0)

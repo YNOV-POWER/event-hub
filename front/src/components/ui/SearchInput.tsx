@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, type InputHTMLAttributes } from "react";
-import { Search } from "lucide-react";
+import { Icon } from "./Icon";
 import styles from "./SearchInput.module.css";
 
 export interface SearchInputProps
@@ -27,7 +27,7 @@ export function SearchInput({
         {label}
       </label>
       <div className={styles.wrap}>
-        <Search size={16} className={styles.icon} aria-hidden="true" />
+        <Icon name="search" size={16} className={styles.icon} />
         <input
           id={inputId}
           type="search"

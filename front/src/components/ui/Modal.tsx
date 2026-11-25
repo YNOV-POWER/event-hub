@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
-import { AlertTriangle, Info } from "lucide-react";
 import { Alert } from "./Alert";
 import { Button } from "./Button";
+import { Icon } from "./Icon";
 import styles from "./Modal.module.css";
 
 export type ModalTone = "danger" | "neutral";
@@ -75,8 +75,6 @@ export function Modal({
     return null;
   }
 
-  const Icon = tone === "danger" ? AlertTriangle : Info;
-
   return (
     <div
       className={styles.backdrop}
@@ -94,7 +92,7 @@ export function Modal({
         className={styles.dialog}
       >
         <div className={`${styles.iconCircle} ${styles[tone]}`} aria-hidden="true">
-          <Icon size={22} />
+          <Icon name={tone === "danger" ? "alert" : "info"} size={22} />
         </div>
 
         <h2 id={titleId} className={styles.title}>

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { AlertOctagon, ChevronLeft, Lock, RefreshCw, Search, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "./Button";
+import { Icon, type IconName } from "./Icon";
 import styles from "./ErrorState.module.css";
 
 export type ErrorStateVariant = "technical" | "notFound" | "forbidden" | "unauthorized";
@@ -24,12 +24,12 @@ export interface ErrorStateProps {
   readonly loginLabel?: string;
 }
 
-const ICON_BY_VARIANT = {
-  technical: AlertOctagon,
-  notFound: Search,
-  forbidden: Lock,
-  unauthorized: ShieldAlert,
-} as const;
+const ICON_BY_VARIANT: Record<ErrorStateVariant, IconName> = {
+  technical: "alertOctagon",
+  notFound: "search",
+  forbidden: "lock",
+  unauthorized: "shieldAlert",
+};
 
 export function ErrorState({
   variant = "technical",
@@ -47,7 +47,7 @@ export function ErrorState({
   loginLabel,
 }: ErrorStateProps) {
   const { t } = useTranslation();
-  const Icon = ICON_BY_VARIANT[variant];
+  const iconName = ICON_BY_VARIANT[variant];
   const isNotFound = variant === "notFound";
 
   return (
@@ -59,7 +59,7 @@ export function ErrorState({
         className={`${styles.iconCircle} ${styles[variant]} ${isNotFound ? styles.iconLarge : ""}`.trim()}
         aria-hidden="true"
       >
-        <Icon size={isNotFound ? 44 : 34} />
+        <Icon name={iconName} size={isNotFound ? 44 : 34} />
       </div>
       {overline ? <p className={styles.overline}>{overline}</p> : null}
       <h1 className={`${styles.title} ${isNotFound ? styles.titleDisplay : ""}`.trim()}>
@@ -72,7 +72,7 @@ export function ErrorState({
 
       <div className={styles.actions}>
         {onRetry && variant === "technical" ? (
-          <Button variant="primary" leftIcon={<RefreshCw size={16} />} onClick={onRetry}>
+          <Button variant="primary" leftIcon={<Icon name="refreshCw" size={16} />} onClick={onRetry}>
             {retryLabel ?? t("errors.retry")}
           </Button>
         ) : null}
@@ -90,7 +90,7 @@ export function ErrorState({
                 : styles.secondaryLink
             }
           >
-            {isNotFound ? <ChevronLeft size={16} aria-hidden="true" /> : null}
+            {isNotFound ? <Icon name="chevronLeft" size={16} /> : null}
             <span>{homeLabel ?? t("errors.backHome")}</span>
           </Link>
         ) : null}

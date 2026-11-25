@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Icon } from "./Icon";
 import styles from "./Pagination.module.css";
 
 export interface PaginationProps {
@@ -53,7 +53,7 @@ export function Pagination({
             aria-label={t("pagination.previous")}
             onClick={() => onPageChange(page - 1)}
           >
-            <ChevronLeft size={16} aria-hidden="true" />
+            <Icon name="chevronLeft" size={16} />
           </button>
         </li>
 
@@ -86,7 +86,7 @@ export function Pagination({
             aria-label={t("pagination.next")}
             onClick={() => onPageChange(page + 1)}
           >
-            <ChevronRight size={16} aria-hidden="true" />
+            <Icon name="chevronRight" size={16} />
           </button>
         </li>
       </ul>

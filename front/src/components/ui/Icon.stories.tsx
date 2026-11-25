@@ -1,21 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Icon, type IconName } from "./Icon";
-
-const ALL_ICONS: readonly IconName[] = [
-  "alert",
-  "calendarPlus",
-  "check",
-  "checkCircle",
-  "hourglass",
-  "info",
-  "xCircle",
-];
+import { ICON_NAMES, Icon } from "./Icon";
 
 const meta = {
   title: "Design System/Icon",
   component: Icon,
   tags: ["autodocs"],
-  args: { name: "check" },
+  args: { name: "check", size: 20 },
 } satisfies Meta<typeof Icon>;
 
 export default meta;
@@ -27,11 +17,41 @@ export const Large: Story = {
   args: { name: "calendarPlus", size: 48 },
 };
 
+export const MeaningfulWithLabel: Story = {
+  args: {
+    name: "checkCircle",
+    size: 24,
+    label: "Inscription confirmée",
+  },
+};
+
 export const Gallery: Story = {
   render: () => (
-    <div style={{ display: "flex", gap: 16, color: "var(--color-primary)" }}>
-      {ALL_ICONS.map((name) => (
-        <Icon key={name} name={name} size={24} />
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+        gap: 12,
+      }}
+    >
+      {ICON_NAMES.map((name) => (
+        <div
+          key={name}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 8,
+            padding: 12,
+            borderRadius: 10,
+            border: "1px solid var(--color-border)",
+            backgroundColor: "var(--color-surface)",
+            color: "var(--color-primary)",
+          }}
+        >
+          <Icon name={name} size={22} />
+          <code style={{ fontSize: 11, color: "var(--color-text-muted)" }}>{name}</code>
+        </div>
       ))}
     </div>
   ),

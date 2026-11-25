@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Ticket } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -10,6 +9,7 @@ import type { CreateRegistrationDto, EventStatus, Registration } from "@/api/cli
 import type { ApiError } from "@/api/errors";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
 import styles from "./EventRegistrationForm.module.css";
 
@@ -175,7 +175,7 @@ export function EventRegistrationForm({
         fullWidth
         isLoading={isSubmitting}
         disabled={isClosed || isFull || isSubmitting}
-        leftIcon={<Ticket size={16} aria-hidden="true" />}
+        leftIcon={<Icon name="ticket" size={16} />}
       >
         {isSubmitting
           ? t("eventRegistration.submitting")

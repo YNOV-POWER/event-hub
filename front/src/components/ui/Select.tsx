@@ -50,7 +50,7 @@ export function Select({
             </option>
           ))}
         </select>
-        <Icon name="chevronDown" size={16} className={styles.chevron} />
+        <Icon name="chevronDown" size={18} className={styles.chevron} />
       </div>
       {error ? (
         <p id={errorId} role="alert" className={styles.error}>

@@ -69,11 +69,11 @@ export function EventCard({ event, href }: EventCardProps) {
 
           <div className={styles.metaList}>
             <p className={styles.metaItem}>
-              <Icon name="clock" size={14} className={styles.metaIcon} />
+              <Icon name="clock" size={16} className={styles.metaIcon} />
               <span>{dateRange}</span>
             </p>
             <p className={styles.metaItem}>
-              <Icon name="mapPin" size={14} className={styles.metaIcon} />
+              <Icon name="mapPin" size={16} className={styles.metaIcon} />
               <span className={styles.location}>{event.location}</span>
             </p>
           </div>

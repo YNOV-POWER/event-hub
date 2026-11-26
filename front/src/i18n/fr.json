@@ -376,10 +376,93 @@
     "emptyTitle": "Bienvenue dans votre espace organisateur",
     "emptyDescription": "Créez votre premier événement pour suivre ici vos inscriptions et votre taux de remplissage."
   },
+  "eventForm": {
+    "backToMyEvents": "Mes événements",
+    "createTitle": "Créer un événement",
+    "editTitle": "Modifier l'événement",
+    "sectionInformation": "Informations",
+    "sectionSchedule": "Date et capacité",
+    "titleLabel": "Titre *",
+    "titlePlaceholder": "Titre de l'événement",
+    "titleHint": "3 à 120 caractères",
+    "descriptionLabel": "Description",
+    "descriptionHint": "{{length}} / 5000 caractères · texte brut, aucun HTML interprété",
+    "categoryLabel": "Catégorie *",
+    "categoryOption": "{{label}} ({{value}})",
+    "locationLabel": "Lieu *",
+    "locationPlaceholder": "Lieu de l'événement",
+    "startsAtLabel": "Début *",
+    "startsAtHint": "Heure locale ({{timeZone}}), envoyée en UTC",
+    "endsAtLabel": "Fin *",
+    "capacityLabel": "Capacité *",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saveDraft": "Enregistrer le brouillon",
+    "saving": "Enregistrement…",
+    "previewTitle": "Aperçu",
+    "tipsTitle": "Bon à savoir",
+    "tips": {
+      "draft": "Un événement créé est en brouillon (DRAFT) jusqu'à publication.",
+      "notify": "Les inscrits sont notifiés des modifications.",
+      "cancelled": "Un événement annulé n'est plus modifiable."
+    },
+    "notEditable": "Cet événement est annulé : il n'est plus modifiable.",
+    "capacityBelowConfirmedAlert": "La capacité ne peut pas être inférieure au nombre d'inscrits confirmés ({{count}}).",
+    "loadingAnnouncement": "Chargement de l'événement",
+    "validation": {
+      "titleLength": "Entre 3 et 120 caractères.",
+      "descriptionMax": "5000 caractères maximum.",
+      "locationRequired": "Indiquez le lieu de l'événement.",
+      "locationMax": "200 caractères maximum.",
+      "startsAtRequired": "Indiquez la date de début.",
+      "endsAtRequired": "Indiquez la date de fin.",
+      "dateInvalid": "Date invalide.",
+      "startsAtFuture": "La date de début doit être dans le futur.",
+      "endsAfterStart": "La fin doit être après le début.",
+      "capacityInteger": "Indiquez un nombre entier de places.",
+      "capacityMin": "Minimum 1 place.",
+      "capacityBelowConfirmed": "Minimum {{count}} (inscrits confirmés)."
+    }
+  },
+  "registrants": {
+    "backToMyEvents": "Mes événements",
+    "title": "Inscrits · {{title}}",
+    "subtitle": "{{date}} · {{location}}",
+    "export": "Exporter en CSV",
+    "stats": {
+      "confirmedValue": "{{confirmed}} / {{capacity}}",
+      "confirmedLabel": "Confirmés",
+      "fillRate": "{{percent}} % de remplissage",
+      "remainingLabel": "Places restantes",
+      "remainingCaption": "Clôture au début",
+      "waitlistLabel": "Liste d'attente",
+      "waitlistCaption": "Promotion automatique"
+    },
+    "columns": {
+      "participant": "Participant",
+      "email": "Email",
+      "status": "Statut",
+      "registeredAt": "Inscrit le"
+    },
+    "tableLabel": "Inscrits de {{title}}",
+    "statuses": {
+      "CONFIRMED": "Confirmé",
+      "WAITLISTED": "Attente · {{position}}"
+    },
+    "paginationSummary": "Affichage {{from}}–{{to}} sur {{total}}",
+    "emptyTitle": "Aucun inscrit pour l'instant",
+    "emptyDescription": "Partagez le lien de l'événement pour attirer des participants.",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "forbiddenTitle": "Accès refusé",
+    "forbiddenDescription": "Seul l'organisateur de l'événement voit ses inscrits.",
+    "back": "Retour",
+    "loadingAnnouncement": "Chargement des inscrits",
+    "csvFilename": "inscrits-{{slug}}.csv",
+    "csvPosition": "Position en liste d'attente"
+  },
   "placeholders": {
     "myRegistrationsTitle": "Mes inscriptions",
-    "myRegistrationsBody": "Cette vue sera branchée sur GET /api/me/registrations au Sprint 2 (US14).",
-    "newEventTitle": "Créer un événement",
-    "newEventBody": "Réservé aux organisateurs — sera branché sur POST /api/events (US05)."
+    "myRegistrationsBody": "Cette vue sera branchée sur GET /api/me/registrations au Sprint 2 (US14)."
   }
 }

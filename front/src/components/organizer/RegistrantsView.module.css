@@ -1,0 +1,60 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-2) 0;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-primary);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.page .statusBadge {
+  flex: 0 0 auto;
+}
+
+.participant {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.emailColumn {
+  width: 300px;
+}
+
+.statusColumn {
+  width: 160px;
+}
+
+.dateColumn {
+  width: 220px;
+}
+
+.mutedCell {
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}

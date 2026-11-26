@@ -22,10 +22,11 @@
 }
 
 .table th {
-  padding: 14px var(--space-6);
-  font-size: var(--text-overline);
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  padding: var(--space-3) 20px;
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-text-muted);
   white-space: nowrap;
@@ -45,7 +46,7 @@
 }
 
 .table td {
-  padding: 16px var(--space-6);
+  padding: 14px 20px;
   vertical-align: middle;
   font-size: var(--text-body);
   color: var(--color-text);

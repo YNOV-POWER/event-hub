@@ -1,0 +1,37 @@
+.meter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sm {
+  max-width: 120px;
+}
+
+.md {
+  width: 100%;
+}
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ratio {
+  font-size: var(--text-small);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.percent {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.barSm {
+  height: 6px;
+}

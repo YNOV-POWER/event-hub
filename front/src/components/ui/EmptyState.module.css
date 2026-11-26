@@ -36,24 +36,3 @@
   font-size: var(--text-body);
   color: var(--color-text-muted);
 }
-
-.actionLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 44px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-strong);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font-size: var(--text-body);
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 140ms ease;
-}
-
-.actionLink:hover {
-  background-color: var(--color-neutral-soft);
-  text-decoration: none;
-}

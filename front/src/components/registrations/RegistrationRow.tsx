@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import type { TFunction } from "i18next";
-import { CalendarPlus, Clock, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { MyRegistrationItem } from "@/api/client";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CalendarChip } from "@/components/ui/CalendarChip";
+import { Icon } from "@/components/ui/Icon";
 import {
   formatCalendarChip,
   formatEventCardDateRange,
@@ -82,11 +82,11 @@ export function RegistrationRow({
 
           <div className={styles.meta}>
             <span className={styles.metaItem}>
-              <Clock size={14} className={styles.metaIcon} aria-hidden="true" />
+              <Icon name="clock" size={14} className={styles.metaIcon} />
               <span>{dateRange}</span>
             </span>
             <span className={styles.metaItem}>
-              <MapPin size={14} className={styles.metaIcon} aria-hidden="true" />
+              <Icon name="mapPin" size={14} className={styles.metaIcon} />
               <span>{event.location}</span>
             </span>
           </div>
@@ -102,7 +102,7 @@ export function RegistrationRow({
           <Button
             variant="secondary"
             size="sm"
-            leftIcon={<CalendarPlus size={15} aria-hidden="true" />}
+            leftIcon={<Icon name="calendarPlus" size={15} />}
             aria-label={t("myRegistrations.actions.icsAriaLabel", { title: event.title })}
             onClick={() => onDownloadIcs(registration)}
           >

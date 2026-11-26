@@ -29,6 +29,8 @@ export type EventSort = NonNullable<
 
 export type EventListQuery = NonNullable<operations["listEvents"]["parameters"]["query"]>;
 
+export type MyEventListQuery = NonNullable<operations["listMyEvents"]["parameters"]["query"]>;
+
 export interface MutationOptions {
   idempotencyKey?: string;
   preferExample?: string;
@@ -60,6 +62,59 @@ export const api = {
     return http<EventResponse>(`/events/${encodeURIComponent(id)}`, {
       method: "GET",
       signal,
+    });
+  },
+
+  /** E3 (US05) — GET /me/events (operationId: listMyEvents) */
+  listMyEvents(query: MyEventListQuery = {}, signal?: AbortSignal): Promise<EventListResponse> {
+    return http<EventListResponse>("/me/events", {
+      method: "GET",
+      query: {
+        page: query.page,
+        pageSize: query.pageSize,
+        status: query.status,
+        sort: query.sort,
+      },
+      signal,
+    });
+  },
+
+  /** E6 (US06) — POST /events/{id}/publish (operationId: publishEvent) */
+  publishEvent(eventId: string, options: MutationOptions = {}): Promise<EventResponse> {
+    const headers: Record<string, string> = {};
+    if (options.preferExample) {
+      headers["Prefer"] = `example=${options.preferExample}`;
+    }
+    return http<EventResponse>(`/events/${encodeURIComponent(eventId)}/publish`, {
+      method: "POST",
+      idempotencyKey: options.idempotencyKey ?? generateUuid(),
+      headers,
+    });
+  },
+
+  /** E7 (US08) — POST /events/{id}/cancel (operationId: cancelEvent) */
+  cancelEvent(eventId: string, options: MutationOptions = {}): Promise<EventResponse> {
+    const headers: Record<string, string> = {};
+    if (options.preferExample) {
+      headers["Prefer"] = `example=${options.preferExample}`;
+    }
+    return http<EventResponse>(`/events/${encodeURIComponent(eventId)}/cancel`, {
+      method: "POST",
+      idempotencyKey: options.idempotencyKey ?? generateUuid(),
+      headers,
+    });
+  },
+
+  /** US26 — POST /events/{id}/duplicate (operationId: duplicateEvent) */
+  duplicateEvent(eventId: string, options: MutationOptions = {}): Promise<EventResponse> {
+    const headers: Record<string, string> = {};
+    if (options.preferExample) {
+      headers["Prefer"] = `example=${options.preferExample}`;
+    }
+    return http<EventResponse>(`/events/${encodeURIComponent(eventId)}/duplicate`, {
+      method: "POST",
+      idempotencyKey: options.idempotencyKey ?? generateUuid(),
+      headers,
     });
   },
 

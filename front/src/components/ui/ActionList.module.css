@@ -1,0 +1,117 @@
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.listItem {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.interactiveRow,
+.interactiveButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: transparent;
+  border: none;
+  text-align: left;
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.interactiveRow:hover,
+.interactiveButton:hover {
+  background-color: var(--color-bg);
+  text-decoration: none;
+}
+
+.staticRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+}
+
+.iconBadge {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tone_primary {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.tone_warning {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.tone_info {
+  background-color: var(--color-info-soft);
+  color: var(--color-info);
+}
+
+.tone_success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.tone_neutral {
+  background-color: var(--color-neutral-soft);
+  color: var(--color-text-muted);
+}
+
+.tone_danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}

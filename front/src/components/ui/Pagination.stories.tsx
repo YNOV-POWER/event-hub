@@ -24,3 +24,11 @@ export const MiddlePage: Story = {
 export const LastPage: Story = {
   args: { page: 7, totalPages: 7 },
 };
+
+export const WithSummaryFooter: Story = {
+  args: {
+    page: 2,
+    totalPages: 7,
+    summary: "Affichage 1–4 sur 8",
+  },
+};

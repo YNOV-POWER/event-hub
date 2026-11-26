@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { Button } from "./Button";
 import { Icon } from "./Icon";
 import styles from "./EmptyState.module.css";
@@ -11,6 +10,7 @@ export interface EmptyStateProps {
   readonly description: string;
   readonly actionLabel?: string;
   readonly actionHref?: string;
+  readonly actionIcon?: ReactNode;
   readonly onAction?: () => void;
   readonly icon?: ReactNode;
 }
@@ -20,6 +20,7 @@ export function EmptyState({
   description,
   actionLabel,
   actionHref,
+  actionIcon,
   onAction,
   icon,
 }: EmptyStateProps) {
@@ -31,11 +32,11 @@ export function EmptyState({
       <h2 className={styles.title}>{title}</h2>
       <p className={styles.description}>{description}</p>
       {actionLabel && actionHref ? (
-        <Link href={actionHref} className={styles.actionLink}>
+        <Button variant="secondary" href={actionHref} leftIcon={actionIcon}>
           {actionLabel}
-        </Link>
+        </Button>
       ) : actionLabel && onAction ? (
-        <Button variant="secondary" onClick={onAction}>
+        <Button variant="secondary" leftIcon={actionIcon} onClick={onAction}>
           {actionLabel}
         </Button>
       ) : null}

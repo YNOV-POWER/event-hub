@@ -38,6 +38,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Liste paginée des événements de l'organisateur connecté (E3, US05) */
+        get: operations["listMyEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publier un événement en brouillon (E6, US06) */
+        post: operations["publishEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Annuler un événement (E7, US08) */
+        post: operations["cancelEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{id}/duplicate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dupliquer un événement en nouveau brouillon (US26, Could) */
+        post: operations["duplicateEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/{id}/registrations": {
         parameters: {
             query?: never;
@@ -127,27 +195,6 @@ export interface components {
             id: string;
             displayName: string;
         };
-        /**
-         * @example {
-         *       "id": "00000000-0000-4000-8200-000000000001",
-         *       "title": "TypeScript Workshop",
-         *       "description": "Hands-on session: strict typing, generics and narrowing on a real codebase.",
-         *       "category": "WORKSHOP",
-         *       "location": "Hub Central, 12 rue de la République, Lyon",
-         *       "startsAt": "2026-12-10T17:00:00.000Z",
-         *       "endsAt": "2026-12-10T20:00:00.000Z",
-         *       "capacity": 30,
-         *       "confirmedCount": 18,
-         *       "remainingSeats": 12,
-         *       "status": "PUBLISHED",
-         *       "organizer": {
-         *         "id": "00000000-0000-4000-8100-000000000001",
-         *         "displayName": "Grace"
-         *       },
-         *       "createdAt": "2026-11-16T09:05:00.000Z",
-         *       "updatedAt": "2026-11-16T09:05:00.000Z"
-         *     }
-         */
         Event: {
             /** Format: uuid */
             id: string;
@@ -162,6 +209,8 @@ export interface components {
             capacity: number;
             readonly confirmedCount: number;
             readonly remainingSeats: number;
+            /** @description Nombre de participants en liste d'attente (optionnel, Sprint 2 / US20 / US27). */
+            readonly waitlistCount?: number;
             status: components["schemas"]["EventStatus"];
             organizer: components["schemas"]["OrganizerSummary"];
             /** Format: date-time */
@@ -188,15 +237,6 @@ export interface components {
             email: string;
             notes?: string;
         };
-        /**
-         * @example {
-         *       "id": "00000000-0000-4000-8300-000000000099",
-         *       "eventId": "00000000-0000-4000-8200-000000000001",
-         *       "status": "CONFIRMED",
-         *       "position": null,
-         *       "createdAt": "2026-11-23T14:30:00.000Z"
-         *     }
-         */
         Registration: {
             /** Format: uuid */
             id: string;
@@ -248,15 +288,6 @@ export interface components {
             password: string;
             displayName: string;
         };
-        /**
-         * @example {
-         *       "id": "00000000-0000-4000-8100-000000000099",
-         *       "email": "ada@example.com",
-         *       "displayName": "Ada",
-         *       "role": "PARTICIPANT",
-         *       "createdAt": "2026-11-23T14:30:00.000Z"
-         *     }
-         */
         User: {
             /** Format: uuid */
             id: string;
@@ -297,24 +328,6 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                /**
-                 * @example {
-                 *       "type": "/problems/invalid-query-param",
-                 *       "title": "Invalid query parameter",
-                 *       "status": 400,
-                 *       "detail": "One or more query parameters are invalid.",
-                 *       "instance": "/api/events",
-                 *       "code": "INVALID_QUERY_PARAM",
-                 *       "requestId": "req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b",
-                 *       "errors": [
-                 *         {
-                 *           "field": "pageSize",
-                 *           "code": "MAX_VALUE",
-                 *           "message": "pageSize must be <= 100."
-                 *         }
-                 *       ]
-                 *     }
-                 */
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
@@ -324,17 +337,6 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                /**
-                 * @example {
-                 *       "type": "/problems/unauthenticated",
-                 *       "title": "Authentication required",
-                 *       "status": 401,
-                 *       "detail": "A valid bearer token is required.",
-                 *       "instance": "/api/events/00000000-0000-4000-8200-000000000001/registrations",
-                 *       "code": "UNAUTHENTICATED",
-                 *       "requestId": "req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b"
-                 *     }
-                 */
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
@@ -344,17 +346,33 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                /**
-                 * @example {
-                 *       "type": "/problems/not-found",
-                 *       "title": "Resource not found",
-                 *       "status": 404,
-                 *       "detail": "Event not found.",
-                 *       "instance": "/api/events/00000000-0000-4000-8200-000000000010",
-                 *       "code": "NOT_FOUND",
-                 *       "requestId": "req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b"
-                 *     }
-                 */
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description Rôle ou propriété insuffisants. */
+        Forbidden: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description Transition de statut interdite (événement déjà publié ou annulé). */
+        InvalidStateTransition: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description Échec de revalidation lors de la publication (date passée ou lieu manquant). */
+        PublishValidationFailed: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
@@ -382,17 +400,6 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                /**
-                 * @example {
-                 *       "type": "/problems/email-already-used",
-                 *       "title": "Email already used",
-                 *       "status": 409,
-                 *       "detail": "An account with this email already exists.",
-                 *       "instance": "/api/auth/register",
-                 *       "code": "EMAIL_ALREADY_USED",
-                 *       "requestId": "req_email_used_01"
-                 *     }
-                 */
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
@@ -402,24 +409,6 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                /**
-                 * @example {
-                 *       "type": "/problems/validation-failed",
-                 *       "title": "Validation failed",
-                 *       "status": 422,
-                 *       "detail": "Request validation failed.",
-                 *       "instance": "/api/auth/register",
-                 *       "code": "VALIDATION_FAILED",
-                 *       "requestId": "req_val_auth_01",
-                 *       "errors": [
-                 *         {
-                 *           "field": "password",
-                 *           "code": "MIN_LENGTH",
-                 *           "message": "password must contain at least 12 characters."
-                 *         }
-                 *       ]
-                 *     }
-                 */
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
@@ -429,17 +418,6 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                /**
-                 * @example {
-                 *       "type": "/problems/internal-error",
-                 *       "title": "Internal server error",
-                 *       "status": 500,
-                 *       "detail": "An unexpected error occurred.",
-                 *       "instance": "/api/events",
-                 *       "code": "INTERNAL_ERROR",
-                 *       "requestId": "req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b"
-                 *     }
-                 */
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
@@ -452,6 +430,11 @@ export interface components {
         To: string;
         /** @example WORKSHOP,CONCERT */
         Category: string;
+        /**
+         * @description Un ou plusieurs statuts séparés par des virgules (DRAFT, PUBLISHED, CANCELLED).
+         * @example DRAFT,PUBLISHED
+         */
+        Status: string;
         Q: string;
         Sort: "startsAt" | "-startsAt" | "createdAt" | "-createdAt" | "title" | "-title";
     };
@@ -490,75 +473,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "data": [
-                     *         {
-                     *           "id": "00000000-0000-4000-8200-000000000001",
-                     *           "title": "TypeScript Workshop",
-                     *           "description": "Hands-on session: strict typing, generics and narrowing on a real codebase.",
-                     *           "category": "WORKSHOP",
-                     *           "location": "Hub Central, 12 rue de la République, Lyon",
-                     *           "startsAt": "2026-12-10T17:00:00.000Z",
-                     *           "endsAt": "2026-12-10T20:00:00.000Z",
-                     *           "capacity": 30,
-                     *           "confirmedCount": 18,
-                     *           "remainingSeats": 12,
-                     *           "status": "PUBLISHED",
-                     *           "organizer": {
-                     *             "id": "00000000-0000-4000-8100-000000000001",
-                     *             "displayName": "Grace"
-                     *           },
-                     *           "createdAt": "2026-11-16T09:05:00.000Z",
-                     *           "updatedAt": "2026-11-16T09:05:00.000Z"
-                     *         },
-                     *         {
-                     *           "id": "00000000-0000-4000-8200-000000000003",
-                     *           "title": "Jazz au parc",
-                     *           "description": "Trio acoustique en plein air. Places limitées.",
-                     *           "category": "CONCERT",
-                     *           "location": "Kiosque du parc, Lyon 6e",
-                     *           "startsAt": "2026-12-12T19:00:00.000Z",
-                     *           "endsAt": "2026-12-12T21:00:00.000Z",
-                     *           "capacity": 3,
-                     *           "confirmedCount": 3,
-                     *           "remainingSeats": 0,
-                     *           "status": "PUBLISHED",
-                     *           "organizer": {
-                     *             "id": "00000000-0000-4000-8100-000000000002",
-                     *             "displayName": "Alan"
-                     *           },
-                     *           "createdAt": "2026-11-16T09:05:00.000Z",
-                     *           "updatedAt": "2026-11-16T09:05:00.000Z"
-                     *         },
-                     *         {
-                     *           "id": "00000000-0000-4000-8200-000000000002",
-                     *           "title": "Conférence Web & Accessibilité",
-                     *           "description": "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif.",
-                     *           "category": "CONFERENCE",
-                     *           "location": "Centre des congrès, Lyon 6e",
-                     *           "startsAt": "2026-12-15T08:00:00.000Z",
-                     *           "endsAt": "2026-12-15T16:00:00.000Z",
-                     *           "capacity": 200,
-                     *           "confirmedCount": 197,
-                     *           "remainingSeats": 3,
-                     *           "status": "PUBLISHED",
-                     *           "organizer": {
-                     *             "id": "00000000-0000-4000-8100-000000000001",
-                     *             "displayName": "Grace"
-                     *           },
-                     *           "createdAt": "2026-11-16T09:05:00.000Z",
-                     *           "updatedAt": "2026-11-16T09:05:00.000Z"
-                     *         }
-                     *       ],
-                     *       "meta": {
-                     *         "page": 1,
-                     *         "pageSize": 20,
-                     *         "totalItems": 3,
-                     *         "totalPages": 1
-                     *       }
-                     *     }
-                     */
                     "application/json": components["schemas"]["EventListResponse"];
                 };
             };
@@ -587,6 +501,129 @@ export interface operations {
                     "application/json": components["schemas"]["EventResponse"];
                 };
             };
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    listMyEvents: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["Page"];
+                pageSize?: components["parameters"]["PageSize"];
+                /**
+                 * @description Un ou plusieurs statuts séparés par des virgules (DRAFT, PUBLISHED, CANCELLED).
+                 * @example DRAFT,PUBLISHED
+                 */
+                status?: components["parameters"]["Status"];
+                sort?: components["parameters"]["Sort"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Page des événements de l'organisateur (brouillons, publiés, annulés, passés inclus). */
+            200: {
+                headers: {
+                    "X-Request-Id": components["headers"]["X-Request-Id"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventListResponse"];
+                };
+            };
+            400: components["responses"]["InvalidQueryParam"];
+            401: components["responses"]["Unauthenticated"];
+            403: components["responses"]["Forbidden"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    publishEvent: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Événement publié. */
+            200: {
+                headers: {
+                    "X-Request-Id": components["headers"]["X-Request-Id"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventResponse"];
+                };
+            };
+            401: components["responses"]["Unauthenticated"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["InvalidStateTransition"];
+            422: components["responses"]["PublishValidationFailed"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    cancelEvent: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Événement annulé (idempotent). */
+            200: {
+                headers: {
+                    "X-Request-Id": components["headers"]["X-Request-Id"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventResponse"];
+                };
+            };
+            401: components["responses"]["Unauthenticated"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    duplicateEvent: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Copie créée en brouillon (DRAFT). */
+            201: {
+                headers: {
+                    "X-Request-Id": components["headers"]["X-Request-Id"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventResponse"];
+                };
+            };
+            401: components["responses"]["Unauthenticated"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             500: components["responses"]["InternalError"];
         };
@@ -666,102 +703,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "data": [
-                     *         {
-                     *           "id": "00000000-0000-4000-8300-000000000001",
-                     *           "eventId": "00000000-0000-4000-8200-000000000001",
-                     *           "status": "CONFIRMED",
-                     *           "position": null,
-                     *           "promotedAt": null,
-                     *           "createdAt": "2026-11-18T10:00:00.000Z",
-                     *           "event": {
-                     *             "id": "00000000-0000-4000-8200-000000000001",
-                     *             "title": "TypeScript Workshop",
-                     *             "description": "Hands-on session: strict typing, generics and narrowing on a real codebase.",
-                     *             "category": "WORKSHOP",
-                     *             "location": "Hub Central, Lyon",
-                     *             "startsAt": "2026-12-10T18:00:00.000Z",
-                     *             "endsAt": "2026-12-10T21:00:00.000Z",
-                     *             "status": "PUBLISHED"
-                     *           }
-                     *         },
-                     *         {
-                     *           "id": "00000000-0000-4000-8300-000000000003",
-                     *           "eventId": "00000000-0000-4000-8200-000000000003",
-                     *           "status": "CONFIRMED",
-                     *           "position": null,
-                     *           "promotedAt": "2026-11-24T16:20:00.000Z",
-                     *           "createdAt": "2026-11-19T09:15:00.000Z",
-                     *           "event": {
-                     *             "id": "00000000-0000-4000-8200-000000000003",
-                     *             "title": "Jazz au parc",
-                     *             "description": "Trio acoustique en plein air. Places limitées.",
-                     *             "category": "CONCERT",
-                     *             "location": "Kiosque du parc, Lyon 6e",
-                     *             "startsAt": "2026-12-12T19:30:00.000Z",
-                     *             "endsAt": "2026-12-12T22:30:00.000Z",
-                     *             "status": "PUBLISHED"
-                     *           }
-                     *         },
-                     *         {
-                     *           "id": "00000000-0000-4000-8300-000000000006",
-                     *           "eventId": "00000000-0000-4000-8200-000000000002",
-                     *           "status": "WAITLISTED",
-                     *           "position": 3,
-                     *           "promotedAt": null,
-                     *           "createdAt": "2026-11-20T14:00:00.000Z",
-                     *           "event": {
-                     *             "id": "00000000-0000-4000-8200-000000000002",
-                     *             "title": "Conférence Web & Accessibilité",
-                     *             "description": "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif.",
-                     *             "category": "CONFERENCE",
-                     *             "location": "Centre des congrès, Lyon 6e",
-                     *             "startsAt": "2026-12-15T08:00:00.000Z",
-                     *             "endsAt": "2026-12-15T16:00:00.000Z",
-                     *             "status": "PUBLISHED"
-                     *           }
-                     *         },
-                     *         {
-                     *           "id": "00000000-0000-4000-8300-000000000010",
-                     *           "eventId": "00000000-0000-4000-8200-000000000013",
-                     *           "status": "CONFIRMED",
-                     *           "position": null,
-                     *           "promotedAt": null,
-                     *           "createdAt": "2026-09-20T12:00:00.000Z",
-                     *           "event": {
-                     *             "id": "00000000-0000-4000-8200-000000000013",
-                     *             "title": "Retour d'expérience Kubernetes",
-                     *             "description": "Événement passé.",
-                     *             "category": "CONFERENCE",
-                     *             "location": "Centre des congrès, Lyon 6e",
-                     *             "startsAt": "2026-10-02T16:30:00.000Z",
-                     *             "endsAt": "2026-10-02T19:30:00.000Z",
-                     *             "status": "PUBLISHED"
-                     *           }
-                     *         },
-                     *         {
-                     *           "id": "00000000-0000-4000-8300-000000000009",
-                     *           "eventId": "00000000-0000-4000-8200-000000000012",
-                     *           "status": "CANCELLED",
-                     *           "position": null,
-                     *           "promotedAt": null,
-                     *           "createdAt": "2026-09-01T10:00:00.000Z",
-                     *           "event": {
-                     *             "id": "00000000-0000-4000-8200-000000000012",
-                     *             "title": "Concert d'hiver",
-                     *             "description": "Annulé pour raisons techniques.",
-                     *             "category": "CONCERT",
-                     *             "location": "Salle des fêtes, Villeurbanne",
-                     *             "startsAt": "2026-09-14T12:00:00.000Z",
-                     *             "endsAt": "2026-09-14T14:00:00.000Z",
-                     *             "status": "CANCELLED"
-                     *           }
-                     *         }
-                     *       ]
-                     *     }
-                     */
                     "application/json": components["schemas"]["MyRegistrationsResponse"];
                 };
             };

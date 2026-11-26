@@ -1,0 +1,95 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  transition: opacity 160ms ease;
+}
+
+.stale {
+  opacity: 0.7;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.panelSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.eventCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eventTitle {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.eventTitle:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.eventDate {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+}
+
+.fillCell {
+  width: 44%;
+  min-width: 180px;
+}
+
+.inlineEmpty p {
+  margin: 0 0 var(--space-2);
+}
+
+@media (max-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fillCell {
+    min-width: 120px;
+  }
+}

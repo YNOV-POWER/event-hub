@@ -135,3 +135,20 @@ export function getInitials(displayName: string): string {
   }
   return first.slice(0, 2).toUpperCase();
 }
+
+export function formatRegistrationDate(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) {
+    return isoDate;
+  }
+  const datePart = new Intl.DateTimeFormat(LOCALE, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+  const timePart = new Intl.DateTimeFormat(LOCALE, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+  return `${datePart} ${timePart}`;
+}

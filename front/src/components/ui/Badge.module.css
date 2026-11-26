@@ -2,11 +2,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.5;
   white-space: nowrap;
 }
 
@@ -51,6 +51,26 @@
 .info {
   background-color: var(--color-info-soft);
   color: var(--color-info-text);
+}
+
+.primary .dot {
+  background-color: var(--color-primary);
+}
+
+.success .dot {
+  background-color: var(--color-success);
+}
+
+.warning .dot {
+  background-color: var(--color-warning);
+}
+
+.danger .dot {
+  background-color: var(--color-danger);
+}
+
+.neutral .dot {
+  background-color: var(--color-text-subtle);
 }
 
 .frosted {

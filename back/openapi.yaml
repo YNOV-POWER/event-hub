@@ -5,7 +5,12 @@ info:
   description: |
     Implémentation du contrat d'API v0.1 (`api-contract-v0.md`).
 
-    Ce document ne décrit que les endpoints implémentés : **E1** `GET /events` et **E2** `GET /events/{id}`.
+    Ce document ne décrit que les endpoints implémentés : **E1** `GET /events`, **E2** `GET /events/{id}`,
+    **A1** `POST /auth/register`, **A2** `POST /auth/login` et **A3** `GET /me`.
+
+    **Authentification** : `POST /auth/login` renvoie un jeton d'accès (JWT HS256, valable 1 heure).
+    Les routes protégées l'attendent dans le header `Authorization: Bearer <accessToken>` ; sans jeton
+    valide, elles répondent `401 UNAUTHENTICATED`. Dans Swagger UI, coller le jeton via **Authorize**.
 
     **Erreurs** : toute réponse non 2xx est un objet Problem Details (RFC 9457) servi en
     `application/problem+json`, avec les membres d'extension `code` (code métier stable, sur lequel
@@ -15,6 +20,8 @@ servers:
   - url: /api
 tags:
   - name: Events
+  - name: Auth
+    description: Création de compte, connexion et profil de l'utilisateur connecté.
 paths:
   /events:
     get:
@@ -55,8 +62,8 @@ paths:
       description: |
         Un événement `PUBLISHED` ou `CANCELLED` est lisible par tous. Un événement `DRAFT` n'est
         visible que de son organisateur ; pour tout autre appelant la réponse est `404`, afin de ne pas
-        révéler son existence. L'authentification n'étant pas encore implémentée, un `DRAFT` renvoie
-        toujours `404`. Un identifiant qui n'est pas un UUID renvoie aussi `404`.
+        révéler son existence. Cette route ne lit pas encore le jeton d'accès : un `DRAFT` renvoie donc
+        toujours `404`, y compris à son organisateur. Un identifiant qui n'est pas un UUID renvoie aussi `404`.
       parameters:
         - name: id
           in: path
@@ -78,14 +85,182 @@ paths:
           $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
+  /auth/register:
+    post:
+      tags: [Auth]
+      operationId: registerAccount
+      summary: Créer un compte utilisateur (A1, US01)
+      description: |
+        Crée un compte `PARTICIPANT`. Ne connecte pas l'utilisateur : aucun jeton n'est renvoyé.
+
+        - `email` est normalisé (espaces retirés, minuscules) : `Ada@Example.com` et `ada@example.com`
+          désignent le même compte.
+        - `password` : 12 caractères minimum, aucune règle de composition, 72 octets maximum en UTF-8
+          (bcrypt ignorerait silencieusement la suite). Il est haché avec bcrypt et n'apparaît dans
+          aucune réponse ni aucun log.
+        - `displayName` : 2 à 80 caractères après retrait des espaces en début et fin.
+        - Tout champ inconnu est refusé (`422`, code de champ `UNKNOWN_FIELD`), y compris `role` :
+          le rôle n'est jamais fourni par le client.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterAccountRequest"
+      responses:
+        "201":
+          description: Compte créé. Le mot de passe et son hash ne sont jamais renvoyés.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/MalformedRequest"
+        "409":
+          $ref: "#/components/responses/EmailAlreadyUsed"
+        "422":
+          description: Corps refusé par la validation. `errors` liste chaque champ fautif.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                passwordTooShort:
+                  summary: Mot de passe de moins de 12 caractères
+                  value:
+                    type: /problems/validation-failed
+                    title: Validation failed
+                    status: 422
+                    detail: Request validation failed.
+                    instance: /api/auth/register
+                    code: VALIDATION_FAILED
+                    requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+                    errors:
+                      - field: password
+                        code: MIN_LENGTH
+                        message: "Too small: expected string to have >=12 characters"
+                roleRefused:
+                  summary: Champ role fourni par le client
+                  value:
+                    type: /problems/validation-failed
+                    title: Validation failed
+                    status: 422
+                    detail: Request validation failed.
+                    instance: /api/auth/register
+                    code: VALIDATION_FAILED
+                    requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+                    errors:
+                      - field: role
+                        code: UNKNOWN_FIELD
+                        message: role is not allowed.
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Se connecter (A2, US02)
+      description: |
+        Vérifie les identifiants et renvoie un jeton d'accès JWT signé en HS256, valable 1 heure
+        (`expiresIn` en secondes). Claims : `sub` (id de l'utilisateur), `role`, `iat`, `exp`.
+
+        Le même `401 INVALID_CREDENTIALS` est renvoyé que l'email soit inconnu ou le mot de passe
+        incorrect, avec un temps de réponse comparable : pas d'énumération de comptes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Identifiants valides.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/MalformedRequest"
+        "401":
+          $ref: "#/components/responses/InvalidCredentials"
+        "422":
+          description: Corps refusé par la validation. `errors` liste chaque champ fautif.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              example:
+                type: /problems/validation-failed
+                title: Validation failed
+                status: 422
+                detail: Request validation failed.
+                instance: /api/auth/login
+                code: VALIDATION_FAILED
+                requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+                errors:
+                  - field: password
+                    code: INVALID_TYPE
+                    message: "Invalid input: expected string, received undefined"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /me:
+    get:
+      tags: [Auth]
+      operationId: getCurrentUser
+      summary: Profil de l'utilisateur connecté (A3, US02, US03)
+      description: |
+        Renvoie l'utilisateur correspondant au jeton d'accès, relu en base. Sert à restaurer la
+        session côté front. Un jeton dont le compte a été supprimé depuis son émission n'est plus valide.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: L'utilisateur connecté.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "500":
+          $ref: "#/components/responses/InternalError"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Jeton `accessToken` renvoyé par `POST /auth/login`, valable 1 heure. Seul l'algorithme HS256
+        est accepté ; les claims `sub` et `exp` sont obligatoires.
+
   headers:
     X-Request-Id:
       description: Identifiant de corrélation de la requête, repris dans `requestId` des erreurs.
       schema:
         type: string
         example: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    WWW-Authenticate:
+      description: Schéma d'authentification attendu (RFC 6750).
+      schema:
+        type: string
+        const: Bearer
 
   parameters:
     Page:
@@ -266,18 +441,136 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/Event"
+    UserRole:
+      type: string
+      enum: [PARTICIPANT, ORGANIZER]
+    User:
+      type: object
+      description: Ressource User du contrat (§1.1). Le mot de passe n'apparaît dans aucune réponse.
+      required: [id, email, displayName, role, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+          minLength: 2
+          maxLength: 80
+        role:
+          $ref: "#/components/schemas/UserRole"
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: 7c0f6b1e-6d0a-4f4b-9f3b-2a5d1f8e9a10
+        email: new.user@example.com
+        displayName: New User
+        role: PARTICIPANT
+        createdAt: "2026-11-26T09:00:00.000Z"
+    UserResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/User"
+    RegisterAccountRequest:
+      type: object
+      required: [email, password, displayName]
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          description: Normalisé côté serveur (espaces retirés, minuscules).
+        password:
+          type: string
+          minLength: 12
+          description: 12 caractères minimum, aucune règle de composition, 72 octets maximum en UTF-8.
+        displayName:
+          type: string
+          minLength: 2
+          maxLength: 80
+          description: Espaces retirés en début et fin avant validation.
+      example:
+        email: new.user@example.com
+        password: correct horse battery
+        displayName: New User
+    LoginRequest:
+      type: object
+      required: [email, password]
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          description: Normalisé côté serveur (espaces retirés, minuscules).
+        password:
+          type: string
+          minLength: 1
+          maxLength: 128
+      example:
+        email: new.user@example.com
+        password: correct horse battery
+    LoginUser:
+      type: object
+      description: Résumé de l'utilisateur connecté, pour éviter un appel à `GET /me` juste après le login.
+      required: [id, displayName, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        role:
+          $ref: "#/components/schemas/UserRole"
+    LoginResult:
+      type: object
+      required: [accessToken, tokenType, expiresIn, user]
+      properties:
+        accessToken:
+          type: string
+          description: "JWT HS256 à envoyer dans `Authorization: Bearer <accessToken>`."
+        tokenType:
+          type: string
+          const: Bearer
+        expiresIn:
+          type: integer
+          const: 3600
+          description: Durée de validité du jeton, en secondes.
+        user:
+          $ref: "#/components/schemas/LoginUser"
+      example:
+        accessToken: eyJhbGciOiJIUzI1NiJ9.<payload>.<signature>
+        tokenType: Bearer
+        expiresIn: 3600
+        user:
+          id: 7c0f6b1e-6d0a-4f4b-9f3b-2a5d1f8e9a10
+          displayName: New User
+          role: PARTICIPANT
+    LoginResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/LoginResult"
     FieldError:
       type: object
       required: [field, code, message]
       properties:
         field:
           type: string
-          description: Chemin pointé du champ ou nom du paramètre de query.
+          description: Chemin pointé du champ du corps ou nom du paramètre de query.
         code:
           type: string
           description: |
-            Code stable : `UNKNOWN_PARAMETER`, `INVALID_TYPE`, `INVALID_FORMAT`, `INVALID_VALUE`,
-            `MIN_VALUE`, `MAX_VALUE`, `MIN_LENGTH`, `MAX_LENGTH`, `INVALID_RANGE`.
+            Code stable : `UNKNOWN_PARAMETER` (query), `UNKNOWN_FIELD` (corps), `INVALID_TYPE`,
+            `INVALID_FORMAT`, `INVALID_VALUE`, `MIN_VALUE`, `MAX_VALUE`, `MIN_LENGTH`, `MAX_LENGTH`,
+            `INVALID_RANGE`.
         message:
           type: string
     ErrorCode:
@@ -367,6 +660,78 @@ components:
             detail: Event not found.
             instance: /api/events/00000000-0000-4000-8200-000000000010
             code: NOT_FOUND
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    MalformedRequest:
+      description: Corps JSON illisible.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/malformed-request
+            title: Malformed request
+            status: 400
+            detail: The request could not be parsed.
+            instance: /api/auth/register
+            code: MALFORMED_REQUEST
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    EmailAlreadyUsed:
+      description: Un compte existe déjà avec cet email (comparaison après normalisation).
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/email-already-used
+            title: Email already used
+            status: 409
+            detail: An account with this email already exists.
+            instance: /api/auth/register
+            code: EMAIL_ALREADY_USED
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    InvalidCredentials:
+      description: Email inconnu ou mot de passe incorrect. Même réponse dans les deux cas.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/invalid-credentials
+            title: Invalid credentials
+            status: 401
+            detail: Email or password is incorrect.
+            instance: /api/auth/login
+            code: INVALID_CREDENTIALS
+            requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    Unauthenticated:
+      description: |
+        Header `Authorization` absent ou mal formé, jeton invalide, expiré, ou compte supprimé depuis
+        l'émission du jeton.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/X-Request-Id"
+        WWW-Authenticate:
+          $ref: "#/components/headers/WWW-Authenticate"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/unauthenticated
+            title: Authentication required
+            status: 401
+            detail: A valid access token is required.
+            instance: /api/me
+            code: UNAUTHENTICATED
             requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
     InternalError:
       description: Erreur serveur non prévue. Aucun détail interne n'est exposé.

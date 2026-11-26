@@ -30,7 +30,15 @@ export const Participant: Story = {
 
 export const Organizer: Story = {
   args: {
-    currentPath: "/admin/events/new",
+    currentPath: "/me/events",
+    user: { displayName: "Grace", role: "ORGANIZER" },
+    onSignOut: noop,
+  },
+};
+
+export const OrganizerDashboard: Story = {
+  args: {
+    currentPath: "/dashboard",
     user: { displayName: "Grace", role: "ORGANIZER" },
     onSignOut: noop,
   },

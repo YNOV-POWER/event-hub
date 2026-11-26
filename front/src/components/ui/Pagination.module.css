@@ -4,6 +4,25 @@
   margin-top: var(--space-8);
 }
 
+.navInline {
+  display: flex;
+  align-items: center;
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.summary {
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+
 .list {
   display: flex;
   align-items: center;

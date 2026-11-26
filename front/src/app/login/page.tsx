@@ -11,6 +11,8 @@ import { Alert } from "@/components/ui/Alert";
 
 const PROTECTED_PAGE_LABELS = new Map([
   ["/me/registrations", "nav.myRegistrations"],
+  ["/me/events", "nav.myEvents"],
+  ["/dashboard", "nav.dashboard"],
   ["/admin/events/new", "nav.newEvent"],
 ]);
 

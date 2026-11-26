@@ -22,7 +22,9 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
   const { t } = useTranslation();
   const isEvents = currentPath === "/" || currentPath.startsWith("/events");
   const isMyRegistrations = currentPath.startsWith("/me/registrations");
-  const isAdminNew = currentPath.startsWith("/admin");
+  const isMyEvents =
+    currentPath.startsWith("/me/events") || currentPath.startsWith("/admin/events");
+  const isDashboard = currentPath.startsWith("/dashboard");
 
   return (
     <header className={styles.header}>
@@ -53,13 +55,22 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
               </Link>
             ) : null}
             {user?.role === "ORGANIZER" ? (
-              <Link
-                href="/admin/events/new"
-                className={`${styles.navLink} ${isAdminNew ? styles.navLinkActive : ""}`.trim()}
-                aria-current={isAdminNew ? "page" : undefined}
-              >
-                {t("nav.newEvent")}
-              </Link>
+              <>
+                <Link
+                  href="/me/events"
+                  className={`${styles.navLink} ${isMyEvents ? styles.navLinkActive : ""}`.trim()}
+                  aria-current={isMyEvents ? "page" : undefined}
+                >
+                  {t("nav.myEvents")}
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className={`${styles.navLink} ${isDashboard ? styles.navLinkActive : ""}`.trim()}
+                  aria-current={isDashboard ? "page" : undefined}
+                >
+                  {t("nav.dashboard")}
+                </Link>
+              </>
             ) : null}
           </nav>
         </div>

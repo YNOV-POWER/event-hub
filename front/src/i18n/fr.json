@@ -13,6 +13,8 @@
     "mainLabel": "Navigation principale",
     "events": "Événements",
     "myRegistrations": "Mes inscriptions",
+    "myEvents": "Mes événements",
+    "dashboard": "Tableau de bord",
     "newEvent": "Créer un événement",
     "login": "Se connecter",
     "register": "Créer un compte",
@@ -258,6 +260,121 @@
       "leftWaitlist": "Vous avez quitté la liste d'attente pour « {{title}} ».",
       "close": "Fermer la notification"
     }
+  },
+  "myEvents": {
+    "title": "Mes événements",
+    "subtitle": "Créez, publiez et suivez vos événements.",
+    "createCta": "Créer un événement",
+    "revalidating": "Mise à jour de vos événements…",
+    "loadingAnnouncement": "Chargement de vos événements organisateur en cours",
+    "statusFilterLabel": "Filtrer par statut",
+    "tabs": {
+      "ALL": "Tous",
+      "DRAFT": "Brouillons",
+      "PUBLISHED": "Publiés",
+      "CANCELLED": "Annulés"
+    },
+    "sortLabel": "Trier par",
+    "sortOptions": {
+      "-startsAt": "Date (récent d'abord)",
+      "startsAt": "Date (plus proche)",
+      "-createdAt": "Création (plus récents)",
+      "title": "Titre (A → Z)",
+      "-title": "Titre (Z → A)"
+    },
+    "columns": {
+      "title": "Titre",
+      "date": "Date",
+      "status": "Statut",
+      "registrations": "Inscrits",
+      "actions": "Actions"
+    },
+    "noRegistrationsDash": "—",
+    "fillLabel": "Remplissage de « {{title}} » : {{confirmed}} sur {{capacity}}",
+    "actions": {
+      "publish": "Publier",
+      "publishAria": "Publier « {{title}} »",
+      "edit": "Modifier",
+      "editAria": "Modifier « {{title}} »",
+      "registrations": "Inscrits",
+      "registrationsAria": "Voir les inscrits de « {{title}} »",
+      "cancel": "Annuler",
+      "cancelAria": "Annuler « {{title}} »",
+      "duplicate": "Dupliquer",
+      "duplicateAria": "Dupliquer « {{title}} »"
+    },
+    "banners": {
+      "published": "« {{title}} » a été publié.",
+      "cancelled": "« {{title}} » a été annulé.",
+      "duplicated": "Une copie de « {{title}} » a été enregistrée en brouillon.",
+      "publishPastDate": "Impossible de publier : la date de début est passée.",
+      "publishValidationFailed": "Impossible de publier : vérifiez que le lieu et une date future sont renseignés.",
+      "publishInvalidState": "Cet événement a déjà été publié ou annulé.",
+      "editAction": "Modifier"
+    },
+    "cancelModal": {
+      "title": "Annuler « {{title}} » ?",
+      "descriptionWithRegistrants_one": "{{count}} inscrit sera notifié et son inscription annulée. Cette action est définitive.",
+      "descriptionWithRegistrants_other": "{{count}} inscrits seront notifiés et leurs inscriptions annulées. Cette action est définitive.",
+      "descriptionWithoutRegistrants": "Cet événement passera définitivement au statut annulé. Cette action est définitive.",
+      "back": "Retour",
+      "confirm": "Annuler l'événement",
+      "submitting": "Annulation…"
+    },
+    "paginationSummary": "Affichage {{from}}–{{to}} sur {{total}}",
+    "emptyTitle": "Aucun événement",
+    "emptyDescription": "Créez votre premier événement : il sera enregistré en brouillon.",
+    "emptyFilteredTitle": "Aucun événement dans ce statut",
+    "emptyFilteredDescription": "Aucun de vos événements ne correspond au filtre sélectionné.",
+    "emptyFilteredAction": "Voir tous mes événements"
+  },
+  "dashboard": {
+    "greeting": "Bonjour {{name}}",
+    "defaultTitle": "Tableau de bord",
+    "subtitle": "Voici l'activité de vos événements.",
+    "createCta": "Créer un événement",
+    "revalidating": "Actualisation du tableau de bord…",
+    "loadingAnnouncement": "Chargement du tableau de bord organisateur en cours",
+    "kpi": {
+      "upcomingLabel": "Événements à venir",
+      "upcomingThisMonth": "+{{count}} ce mois-ci",
+      "upcomingNoneThisMonth": "Aucun ce mois-ci",
+      "draftsLabel": "Brouillons",
+      "draftsToPublish": "À publier",
+      "draftsNone": "À jour",
+      "fillRateLabel": "Taux de remplissage moyen",
+      "fillRateCaption_one": "Sur {{count}} événement à venir",
+      "fillRateCaption_other": "Sur {{count}} événements à venir",
+      "fillRateEmpty": "Aucun événement publié",
+      "waitlistLabel": "En liste d'attente",
+      "waitlistCaption_one": "Sur {{count}} événement",
+      "waitlistCaption_other": "Sur {{count}} événements",
+      "waitlistNone": "Aucune file active"
+    },
+    "upcomingSection": {
+      "title": "Prochains événements",
+      "eventColumn": "Événement",
+      "fillColumn": "Remplissage",
+      "fillBarLabel": "Remplissage de « {{title}} » : {{percent}} %",
+      "empty": "Aucun événement publié à venir pour le moment.",
+      "manageLink": "Gérer mes événements"
+    },
+    "todoSection": {
+      "title": "À faire",
+      "draftsTitle_one": "{{count}} brouillon à publier",
+      "draftsTitle_other": "{{count}} brouillons à publier",
+      "almostFullTitle": "Bientôt complet",
+      "fullTitle": "Événement complet",
+      "almostFullSubtitle_one": "{{title}} : {{count}} place",
+      "almostFullSubtitle_other": "{{title}} : {{count}} places",
+      "fullSubtitle": "{{title}} : 0 place restante",
+      "waitlistTitle_one": "{{count}} personne en attente",
+      "waitlistTitle_other": "{{count}} personnes en attente",
+      "allClearTitle": "Tout est à jour",
+      "allClearSubtitle": "Aucune action immédiate sur vos événements."
+    },
+    "emptyTitle": "Bienvenue dans votre espace organisateur",
+    "emptyDescription": "Créez votre premier événement pour suivre ici vos inscriptions et votre taux de remplissage."
   },
   "placeholders": {
     "myRegistrationsTitle": "Mes inscriptions",

@@ -82,6 +82,47 @@ export function formatOrdinalFr(position: number): string {
 }
 
 /**
+ * Formate une date ISO 8601 UTC pour les tableaux organisateur (écran 07) :
+ * ex. "15/12/2026 · 09:00"
+ */
+export function formatOrganizerEventDate(startsAtIso: string): string {
+  const date = new Date(startsAtIso);
+  if (Number.isNaN(date.getTime())) {
+    return startsAtIso;
+  }
+  const datePart = new Intl.DateTimeFormat(LOCALE, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+  const timePart = new Intl.DateTimeFormat(LOCALE, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+  return `${datePart} · ${timePart}`;
+}
+
+/**
+ * Formate une date courte pour le tableau de bord organisateur (écran 10) :
+ * ex. "10/12 · 19:00"
+ */
+export function formatShortEventDate(startsAtIso: string): string {
+  const date = new Date(startsAtIso);
+  if (Number.isNaN(date.getTime())) {
+    return startsAtIso;
+  }
+  const datePart = new Intl.DateTimeFormat(LOCALE, {
+    day: "2-digit",
+    month: "2-digit",
+  }).format(date);
+  const timePart = new Intl.DateTimeFormat(LOCALE, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+  return `${datePart} · ${timePart}`;
+}
+
+/**
  * Retourne 1 à 2 initiales pour un nom d'organisateur ou d'utilisateur.
  */
 export function getInitials(displayName: string): string {

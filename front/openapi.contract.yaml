@@ -128,6 +128,225 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /me/events:
+    get:
+      tags: [Events]
+      operationId: listMyEvents
+      summary: Liste paginée des événements de l'organisateur connecté (E3, US05)
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Status"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Page des événements de l'organisateur (brouillons, publiés, annulés, passés inclus).
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+              example:
+                data:
+                  - id: "00000000-0000-4000-8200-000000000014"
+                    title: "Conférence Accessibilité Web"
+                    description: "Bonnes pratiques WCAG 2.2 AA, navigation clavier et lecteurs d'écran."
+                    category: "CONFERENCE"
+                    location: "Amphithéâtre Ynov, Lyon 7e"
+                    startsAt: "2026-12-15T08:00:00.000Z"
+                    endsAt: "2026-12-15T12:00:00.000Z"
+                    capacity: 50
+                    confirmedCount: 0
+                    remainingSeats: 50
+                    waitlistCount: 0
+                    status: "DRAFT"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-24T10:00:00.000Z"
+                    updatedAt: "2026-11-24T10:00:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000001"
+                    title: "TypeScript Workshop"
+                    description: "Hands-on session: strict typing, generics and narrowing on a real codebase."
+                    category: "WORKSHOP"
+                    location: "Hub Central, 12 rue de la République, Lyon"
+                    startsAt: "2026-12-10T18:00:00.000Z"
+                    endsAt: "2026-12-10T21:00:00.000Z"
+                    capacity: 30
+                    confirmedCount: 18
+                    remainingSeats: 12
+                    waitlistCount: 4
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000005"
+                    title: "Meetup Node.js Lyon"
+                    description: "Deux talks courts puis échanges autour d'un verre."
+                    category: "OTHER"
+                    location: "Espace coworking, Lyon 7e"
+                    startsAt: "2026-12-18T17:30:00.000Z"
+                    endsAt: "2026-12-18T20:00:00.000Z"
+                    capacity: 50
+                    confirmedCount: 5
+                    remainingSeats: 45
+                    waitlistCount: 0
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000015"
+                    title: "Atelier Figma"
+                    description: "Atelier annulé."
+                    category: "WORKSHOP"
+                    location: "Campus Ynov, Lyon"
+                    startsAt: "2026-09-14T12:00:00.000Z"
+                    endsAt: "2026-09-14T15:00:00.000Z"
+                    capacity: 20
+                    confirmedCount: 0
+                    remainingSeats: 20
+                    waitlistCount: 0
+                    status: "CANCELLED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-09-01T09:00:00.000Z"
+                    updatedAt: "2026-09-10T09:00:00.000Z"
+                meta:
+                  page: 1
+                  pageSize: 10
+                  totalItems: 4
+                  totalPages: 1
+        "400":
+          $ref: "#/components/responses/InvalidQueryParam"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/publish:
+    post:
+      tags: [Events]
+      operationId: publishEvent
+      summary: Publier un événement en brouillon (E6, US06)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Événement publié.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/InvalidStateTransition"
+        "422":
+          $ref: "#/components/responses/PublishValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/cancel:
+    post:
+      tags: [Events]
+      operationId: cancelEvent
+      summary: Annuler un événement (E7, US08)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Événement annulé (idempotent).
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/duplicate:
+    post:
+      tags: [Events]
+      operationId: duplicateEvent
+      summary: Dupliquer un événement en nouveau brouillon (US26, Could)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "201":
+          description: Copie créée en brouillon (DRAFT).
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /events/{id}/registrations:
     post:
       tags: [Registrations]
@@ -378,6 +597,13 @@ components:
       schema:
         type: string
       example: WORKSHOP,CONCERT
+    Status:
+      name: status
+      in: query
+      description: Un ou plusieurs statuts séparés par des virgules (DRAFT, PUBLISHED, CANCELLED).
+      schema:
+        type: string
+      example: DRAFT,PUBLISHED
     Q:
       name: q
       in: query
@@ -465,6 +691,11 @@ components:
         remainingSeats:
           type: integer
           readOnly: true
+        waitlistCount:
+          type: integer
+          minimum: 0
+          readOnly: true
+          description: Nombre de participants en liste d'attente (optionnel, Sprint 2 / US20 / US27).
         status:
           $ref: "#/components/schemas/EventStatus"
         organizer:
@@ -761,6 +992,52 @@ components:
             instance: /api/events/00000000-0000-4000-8200-000000000010
             code: NOT_FOUND
             requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    Forbidden:
+      description: Rôle ou propriété insuffisants.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: Organizer role required.
+            instance: /api/me/events
+            code: FORBIDDEN
+            requestId: req_forbidden_01
+    InvalidStateTransition:
+      description: Transition de statut interdite (événement déjà publié ou annulé).
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/invalid-state-transition
+            title: Invalid state transition
+            status: 409
+            detail: Only DRAFT events can be published.
+            instance: /api/events/00000000-0000-4000-8200-000000000001/publish
+            code: INVALID_STATE_TRANSITION
+            requestId: req_invalid_state_01
+    PublishValidationFailed:
+      description: Échec de revalidation lors de la publication (date passée ou lieu manquant).
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/validation-failed
+            title: Validation failed
+            status: 422
+            detail: Event cannot be published with a past start date.
+            instance: /api/events/00000000-0000-4000-8200-000000000014/publish
+            code: VALIDATION_FAILED
+            requestId: req_publish_422_01
+            errors:
+              - field: startsAt
+                code: PAST_DATE
+                message: startsAt must be in the future.
     RegistrationConflict:
       description: Conflit métier lors de l'inscription (complet ou déjà inscrit).
       content:

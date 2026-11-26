@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { RefreshCw, Ticket } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { MyRegistrationItem } from "@/api/client";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Icon } from "@/components/ui/Icon";
 import { SkeletonRow } from "@/components/ui/SkeletonRow";
 import { SyncIndicator } from "@/components/ui/SyncIndicator";
 import { RegistrationRow } from "./RegistrationRow";
@@ -77,7 +77,7 @@ export function MyRegistrationsView({
             <div>
               <Button
                 variant="secondary"
-                leftIcon={<RefreshCw size={15} aria-hidden="true" />}
+                leftIcon={<Icon name="refreshCw" size={15} />}
                 onClick={onRetry}
               >
                 {t("errors.retry")}
@@ -87,7 +87,7 @@ export function MyRegistrationsView({
         </div>
       ) : totalCount === 0 ? (
         <EmptyState
-          icon={<Ticket size={28} />}
+          icon={<Icon name="ticket" size={28} />}
           title={t("myRegistrations.emptyTitle")}
           description={t("myRegistrations.emptyDescription")}
           actionLabel={t("myRegistrations.emptyAction")}
@@ -149,7 +149,7 @@ export function MyRegistrationsView({
                 </section>
               ) : (
                 <EmptyState
-                  icon={<Ticket size={28} />}
+                  icon={<Icon name="ticket" size={28} />}
                   title={t("myRegistrations.emptyTitle")}
                   description={t("myRegistrations.emptyDescription")}
                   actionLabel={t("myRegistrations.emptyAction")}
@@ -178,7 +178,7 @@ export function MyRegistrationsView({
             </section>
           ) : (
             <EmptyState
-              icon={<Ticket size={28} />}
+              icon={<Icon name="ticket" size={28} />}
               title={t("myRegistrations.emptyPastTitle")}
               description={t("myRegistrations.emptyPastDescription")}
             />

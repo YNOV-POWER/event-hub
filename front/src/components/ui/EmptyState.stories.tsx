@@ -32,7 +32,7 @@ export const NoRegistrations: Story = {
   args: {
     title: "Aucune inscription",
     description: "Vous n'êtes encore inscrit·e à aucun événement.",
-    actionLabel: "Explorer le catalogue",
-    onAction: noop,
+    actionLabel: "Voir les événements",
+    actionHref: "/events",
   },
 };

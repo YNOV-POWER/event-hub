@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EventHub · Ynov Lyon",
+  title: "EventHub · Ynov Connect",
   description: "Catalogue et gestion des événements Ynov — Atelier 6.",
 };
 

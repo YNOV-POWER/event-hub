@@ -69,3 +69,10 @@ export class InvalidCredentialsError extends AppError {
     this.name = "InvalidCredentialsError";
   }
 }
+
+export class UnauthenticatedError extends AppError {
+  constructor() {
+    super(401, "UNAUTHENTICATED", "A valid access token is required.");
+    this.name = "UnauthenticatedError";
+  }
+}

@@ -52,7 +52,7 @@ src/
   errors/app-error.ts     AppError, erreurs métier et codes du contrat (§5.1)
   http/
     problem-details.ts    construction des réponses RFC 9457
-    parse-body.ts         validation d'un corps de requête avec un schéma Zod -> ValidationError (422)
+    parse-body.ts         validation d'un corps de requête avec un schéma Zod -> ValidationError (422), codes de champ du contrat
     middlewares/          request-id, 404, gestionnaire d'erreurs
   docs/openapi.ts         chargement de openapi.yaml pour Swagger UI
   modules/events/
@@ -64,10 +64,11 @@ src/
     event.repository.ts   accès aux données (Prisma), seule couche qui connaît la base
     event.model.ts        types du domaine
   modules/auth/
-    auth.routes.ts        routes Express (createAuthRouter)
+    auth.routes.ts        routes Express (createAuthRouter, createMeRouter)
+    auth.middleware.ts    requireAuth : vérifie le jeton Bearer, sinon 401 UNAUTHENTICATED
     auth.controller.ts    couche HTTP : valide le body, appelle le service, enveloppe la réponse dans { data }
     auth.schema.ts        schémas Zod de register et login
-    auth.service.ts       hachage bcrypt, création de l'utilisateur, vérification des identifiants, signature du JWT
+    auth.service.ts       hachage bcrypt, création de l'utilisateur, vérification des identifiants, signature et vérification du JWT
 ```
 
 Le service `events` dépend de l'interface `EventRepository`, pas de Prisma : il peut être testé avec un faux dépôt. Le service `auth` appelle pour l'instant Prisma directement et reçoit `JWT_SECRET` par son constructeur ; extraire un dépôt `auth.repository.ts` suivra la même logique si besoin.
@@ -77,13 +78,14 @@ Le service `events` dépend de l'interface `EventRepository`, pas de Prisma : il
 | # | Route | Notes |
 |---|---|---|
 | E1 | `GET /api/events` | `PUBLISHED` uniquement, `from` = maintenant par défaut, filtres `from`, `to`, `category`, `q`, tri `sort`, pagination `page` / `pageSize`. Paramètre inconnu ou invalide : `400 INVALID_QUERY_PARAM` |
-| E2 | `GET /api/events/{id}` | `DRAFT` invisible (404) : aucun middleware d'authentification n'existe encore, donc un `DRAFT` renvoie toujours 404. Id non UUID : 404 |
+| E2 | `GET /api/events/{id}` | `DRAFT` invisible (404) : la route ne lit pas encore le jeton, donc un `DRAFT` renvoie toujours 404, y compris à son organisateur. Id non UUID : 404 |
 | A1 | `POST /api/auth/register` | Crée un compte `PARTICIPANT` (US01). Ne connecte pas l'utilisateur |
 | A2 | `POST /api/auth/login` | Vérifie les identifiants et renvoie un jeton d'accès (US02) |
+| A3 | `GET /api/me` | Profil de l'utilisateur connecté (US02, US03). Jeton `Bearer` obligatoire |
 
-Pas encore implémentés : `GET /api/me` (A3) et le middleware qui vérifie l'en-tête `Authorization: Bearer <jeton>` (`401 UNAUTHENTICATED`). Un jeton est donc délivré par le login mais aucune route ne l'exige pour l'instant.
+Les réponses de succès des routes `auth` et `me` sont enveloppées dans `{ "data": ... }`, conformément au contrat.
 
-Les réponses de succès des routes `auth` sont enveloppées dans `{ "data": ... }`, conformément au contrat.
+Les erreurs de validation (`422 VALIDATION_FAILED`) portent dans `errors` un code de champ stable : `MIN_LENGTH`, `MAX_LENGTH`, `INVALID_FORMAT`, `INVALID_TYPE`, `INVALID_VALUE` ou `UNKNOWN_FIELD`.
 
 ### `POST /api/auth/register`
 
@@ -129,6 +131,19 @@ Réponses :
 
 Le jeton est un JWT signé en HS256 avec `JWT_SECRET`, valable 1 heure (`sub` = id de l'utilisateur, `role` = rôle). Le même `401` est renvoyé que l'email existe ou non : pas d'énumération de comptes. Quand l'email est inconnu, un hash factice est tout de même comparé pour que le temps de réponse ne révèle pas non plus l'existence du compte.
 
+### Routes protégées et `GET /api/me`
+
+Une route protégée est montée derrière le middleware `requireAuth(authService)` (`src/modules/auth/auth.middleware.ts`). Il exige l'en-tête `Authorization: Bearer <accessToken>` et vérifie le JWT : algorithme `HS256` uniquement, signature avec `JWT_SECRET`, claims `sub` et `exp` présents, jeton non expiré. Sinon : `401 UNAUTHENTICATED`. Le gestionnaire d'erreurs ajoute l'en-tête `WWW-Authenticate: Bearer` à toute réponse `UNAUTHENTICATED`. L'identité vérifiée (`id`, `role`) est lue dans le handler avec `getAuthUser(res)`.
+
+`GET /api/me` renvoie l'utilisateur connecté, relu en base :
+
+| Statut | Code | Cas |
+|---|---|---|
+| `200` | — | Corps : `{ "data": { id, email, displayName, role, createdAt } }` |
+| `401` | `UNAUTHENTICATED` | En-tête absent ou mal formé, jeton invalide, expiré, ou compte supprimé depuis l'émission du jeton |
+
+Le contrôle de rôle (`403 FORBIDDEN`, routes `ORG`) n'existe pas encore : aucune route implémentée n'en a besoin.
+
 ## Erreurs (RFC 9457)
 
 Toute réponse non 2xx est servie en `application/problem+json` :
@@ -159,6 +174,7 @@ Erreurs applicatives disponibles dans `src/errors/app-error.ts` :
 | `ValidationError` | 422 | `VALIDATION_FAILED` |
 | `EmailAlreadyUsedError` | 409 | `EMAIL_ALREADY_USED` |
 | `InvalidCredentialsError` | 401 | `INVALID_CREDENTIALS` |
+| `UnauthenticatedError` | 401 | `UNAUTHENTICATED` |
 
 Pour en ajouter une, déclarer son code dans `ErrorCode` puis créer une classe qui étend `AppError` : le gestionnaire d'erreurs la sérialise sans modification.
 

@@ -11,6 +11,7 @@ export const registerSchema = z.strictObject({
         .min(12)
         .refine((value) => new TextEncoder().encode(value).length <= BCRYPT_MAX_BYTES, {
             message: "password must be at most 72 bytes.",
+            params: { code: "MAX_LENGTH" },
         }),
     displayName: z.string().trim().min(2).max(80),
 });

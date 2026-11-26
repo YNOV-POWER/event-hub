@@ -35,6 +35,11 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     console.error(`[${requestId}] ${req.method} ${req.originalUrl}`, error);
   }
 
+  // RFC 6750 §3: a 401 on a protected resource names the expected authentication scheme.
+  if (appError.code === "UNAUTHENTICATED") {
+    res.setHeader("WWW-Authenticate", "Bearer");
+  }
+
   res
     .status(appError.status)
     .type(PROBLEM_CONTENT_TYPE)

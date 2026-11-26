@@ -15,6 +15,18 @@ docker compose exec back npm run db:seed
 
 Au démarrage, le conteneur `back` applique les migrations (`prisma migrate deploy`) puis lance `tsx watch`. `src/`, `prisma/` et `openapi.yaml` sont montés depuis l'hôte : le serveur redémarre à chaque modification (le watcher fonctionne en polling, cf. `compose.yaml`). Après une sauvegarde, attendre le message `EventHub API listening on port 3000` avant de relancer une requête, sinon elle reste sans réponse pendant le redémarrage.
 
+## Variables d'environnement
+
+Validées au démarrage dans `src/config/env.ts` : le serveur refuse de démarrer si l'une d'elles est invalide.
+
+| Variable | Rôle |
+|---|---|
+| `PORT` | Port HTTP (défaut `3000`) |
+| `DATABASE_URL` | Chaîne de connexion PostgreSQL |
+| `JWT_SECRET` | Secret de signature des jetons d'accès, 32 caractères minimum |
+
+`compose.yaml` fournit une valeur par défaut de `JWT_SECRET` pour le développement uniquement. En production, la définir via une vraie variable d'environnement, jamais dans le dépôt. Changer le secret invalide tous les jetons déjà émis.
+
 ## Commandes utiles
 
 | Commande | Effet |
@@ -25,9 +37,9 @@ Au démarrage, le conteneur `back` applique les migrations (`prisma migrate depl
 | `docker compose logs -f back` | Logs de l'API |
 | `docker compose down` | Arrête la stack (ajouter `-v` supprime aussi les données PostgreSQL) |
 
-Sur l'hôte (après `npm ci` et `npm run prisma:generate`) : `npm run typecheck`, `npm run lint`, `npm run build`.
+Sur l'hôte (après `npm ci` et `npm run prisma:generate`) : `npm run typecheck`, `npm run lint`, `npm run build`. Sans `prisma:generate`, le dossier `generated/prisma` n'existe pas et TypeScript comme ESLint remontent des centaines d'erreurs sans rapport avec le code.
 
-> Les dépendances (`bcrypt`, `zod`…) doivent être déclarées dans `package.json` et installées au build de l'image. Ne pas les installer avec `docker exec ... npm i` : elles seraient perdues à la prochaine reconstruction. Ajouter une dépendance depuis `back/` sur l'hôte, puis `docker compose up -d --build back`.
+> Les dépendances (`bcrypt`, `jose`, `zod`…) doivent être déclarées dans `package.json` et installées au build de l'image. Ne pas les installer avec `docker exec ... npm i` : elles seraient perdues à la prochaine reconstruction. Ajouter une dépendance depuis `back/` sur l'hôte, puis `docker compose up -d --build back`.
 
 ## Architecture
 
@@ -40,6 +52,7 @@ src/
   errors/app-error.ts     AppError, erreurs métier et codes du contrat (§5.1)
   http/
     problem-details.ts    construction des réponses RFC 9457
+    parse-body.ts         validation d'un corps de requête avec un schéma Zod -> ValidationError (422)
     middlewares/          request-id, 404, gestionnaire d'erreurs
   docs/openapi.ts         chargement de openapi.yaml pour Swagger UI
   modules/events/
@@ -52,46 +65,69 @@ src/
     event.model.ts        types du domaine
   modules/auth/
     auth.routes.ts        routes Express (createAuthRouter)
-    auth.controller.ts    couche HTTP : valide le body, appelle le service, répond 201
-    auth.schema.ts        schéma Zod du body de POST /auth/register
-    auth.service.ts       hachage bcrypt, création de l'utilisateur, traduction de l'erreur d'unicité
+    auth.controller.ts    couche HTTP : valide le body, appelle le service, enveloppe la réponse dans { data }
+    auth.schema.ts        schémas Zod de register et login
+    auth.service.ts       hachage bcrypt, création de l'utilisateur, vérification des identifiants, signature du JWT
 ```
 
-Le service `events` dépend de l'interface `EventRepository`, pas de Prisma : il peut être testé avec un faux dépôt. Le service `auth` appelle pour l'instant Prisma directement ; extraire un dépôt `auth.repository.ts` suivra la même logique si besoin.
+Le service `events` dépend de l'interface `EventRepository`, pas de Prisma : il peut être testé avec un faux dépôt. Le service `auth` appelle pour l'instant Prisma directement et reçoit `JWT_SECRET` par son constructeur ; extraire un dépôt `auth.repository.ts` suivra la même logique si besoin.
 
 ## Endpoints implémentés
 
 | # | Route | Notes |
 |---|---|---|
 | E1 | `GET /api/events` | `PUBLISHED` uniquement, `from` = maintenant par défaut, filtres `from`, `to`, `category`, `q`, tri `sort`, pagination `page` / `pageSize`. Paramètre inconnu ou invalide : `400 INVALID_QUERY_PARAM` |
-| E2 | `GET /api/events/{id}` | `DRAFT` invisible (404) : la connexion n'existe pas encore, donc un `DRAFT` renvoie toujours 404. Id non UUID : 404 |
-| A1 | `POST /api/auth/register` | Crée un compte `PARTICIPANT` (US01). Ne connecte pas l'utilisateur : aucun jeton n'est renvoyé. Voir ci-dessous |
+| E2 | `GET /api/events/{id}` | `DRAFT` invisible (404) : aucun middleware d'authentification n'existe encore, donc un `DRAFT` renvoie toujours 404. Id non UUID : 404 |
+| A1 | `POST /api/auth/register` | Crée un compte `PARTICIPANT` (US01). Ne connecte pas l'utilisateur |
+| A2 | `POST /api/auth/login` | Vérifie les identifiants et renvoie un jeton d'accès (US02) |
+
+Pas encore implémentés : `GET /api/me` (A3) et le middleware qui vérifie l'en-tête `Authorization: Bearer <jeton>` (`401 UNAUTHENTICATED`). Un jeton est donc délivré par le login mais aucune route ne l'exige pour l'instant.
+
+Les réponses de succès des routes `auth` sont enveloppées dans `{ "data": ... }`, conformément au contrat.
 
 ### `POST /api/auth/register`
 
 Corps JSON :
 
 ```json
-{ "email": "ada@example.com", "password": "motdepasse123", "displayName": "Ada" }
+{ "email": "ada@example.com", "password": "correct horse battery", "displayName": "Ada" }
 ```
 
 | Champ | Règle |
 |---|---|
 | `email` | format email valide, 254 caractères max, normalisé (espaces retirés, minuscules) |
-| `password` | 8 à 72 caractères (72 = limite de bcrypt) |
-| `displayName` | 1 à 80 caractères, espaces retirés |
+| `password` | 12 caractères minimum, 72 octets maximum (limite de bcrypt), aucune règle de composition |
+| `displayName` | 2 à 80 caractères, espaces retirés |
 
-Le rôle n'est jamais lu depuis le corps de la requête : tout compte créé est `PARTICIPANT`. Les organisateurs sont créés par un autre chemin (seed, administration).
+Tout champ inconnu est refusé (`422`, code de champ `UNKNOWN_FIELD`), y compris `role` : le rôle n'est jamais fourni par le client. Tout compte créé est `PARTICIPANT`. Les organisateurs sont créés par un autre chemin (seed, administration).
 
 Réponses :
 
 | Statut | Code | Cas |
 |---|---|---|
-| `201` | — | Compte créé. Corps : `id`, `email`, `displayName`, `role`. Le hash n'est jamais renvoyé |
-| `400` | `VALIDATION_FAILED` | Corps invalide. `errors` liste chaque champ fautif (`field`, `code`, `message`) |
+| `201` | — | Compte créé. Corps : `{ "data": { id, email, displayName, role, createdAt } }`. Le hash n'est jamais renvoyé |
+| `422` | `VALIDATION_FAILED` | Corps invalide ou champ inconnu. `errors` liste chaque champ fautif (`field`, `code`, `message`) |
 | `409` | `EMAIL_ALREADY_USED` | Un compte existe déjà avec cet email (contrainte d'unicité en base, code Prisma `P2002`) |
 
 Le mot de passe est haché avec bcrypt (12 tours) avant stockage.
+
+### `POST /api/auth/login`
+
+Corps JSON :
+
+```json
+{ "email": "ada@example.com", "password": "correct horse battery" }
+```
+
+Réponses :
+
+| Statut | Code | Cas |
+|---|---|---|
+| `200` | — | Corps : `{ "data": { accessToken, tokenType: "Bearer", expiresIn: 3600, user: { id, displayName, role } } }` |
+| `422` | `VALIDATION_FAILED` | Corps invalide ou champ inconnu |
+| `401` | `INVALID_CREDENTIALS` | Email inconnu ou mot de passe incorrect |
+
+Le jeton est un JWT signé en HS256 avec `JWT_SECRET`, valable 1 heure (`sub` = id de l'utilisateur, `role` = rôle). Le même `401` est renvoyé que l'email existe ou non : pas d'énumération de comptes. Quand l'email est inconnu, un hash factice est tout de même comparé pour que le temps de réponse ne révèle pas non plus l'existence du compte.
 
 ## Erreurs (RFC 9457)
 
@@ -112,7 +148,19 @@ Toute réponse non 2xx est servie en `application/problem+json` :
 
 `code`, `requestId` et `errors` sont des membres d'extension. Le front se base sur `code`, jamais sur le message. `requestId` est aussi renvoyé dans le header `X-Request-Id`. Aucune stack trace ni requête SQL n'est exposée.
 
-Erreurs applicatives disponibles dans `src/errors/app-error.ts` : `NotFoundError` (404), `InvalidQueryParamError` (400), `ValidationError` (400, `VALIDATION_FAILED`), `EmailAlreadyUsedError` (409, `EMAIL_ALREADY_USED`). Pour en ajouter une, déclarer son code dans `ErrorCode` puis créer une classe qui étend `AppError` : le gestionnaire d'erreurs la sérialise sans modification.
+> Le contrat d'API v0.1 (§5) décrit un autre corps d'erreur (`{ "error": { code, message, status, details, requestId } }`). Le back répond pour l'instant en RFC 9457, comme ci-dessus : à aligner avec le contrat ou à faire acter côté front.
+
+Erreurs applicatives disponibles dans `src/errors/app-error.ts` :
+
+| Classe | Statut | Code |
+|---|---|---|
+| `NotFoundError` | 404 | `NOT_FOUND` |
+| `InvalidQueryParamError` | 400 | `INVALID_QUERY_PARAM` |
+| `ValidationError` | 422 | `VALIDATION_FAILED` |
+| `EmailAlreadyUsedError` | 409 | `EMAIL_ALREADY_USED` |
+| `InvalidCredentialsError` | 401 | `INVALID_CREDENTIALS` |
+
+Pour en ajouter une, déclarer son code dans `ErrorCode` puis créer une classe qui étend `AppError` : le gestionnaire d'erreurs la sérialise sans modification.
 
 ## Base de données
 
@@ -126,4 +174,4 @@ Contraintes `CHECK` ajoutées à la main dans la migration (non exprimables dans
 
 6 utilisateurs (2 organisateurs, 4 participants), 13 événements (publiés, brouillons, annulé, passé, un complet avec liste d'attente) et 11 inscriptions. Les dates sont relatives au moment du seed.
 
-L'algorithme de hachage est désormais fixé (bcrypt, 12 tours), mais les comptes seedés ont encore un `password_hash` factice : ils ne pourront pas se connecter tant que le seed n'aura pas été mis à jour avec de vrais hashes et que l'US de connexion (US02) n'existera pas.
+Le login existe, mais les comptes seedés ont encore un `password_hash` factice : ils ne peuvent pas se connecter tant que le seed n'a pas été mis à jour avec de vrais hashes bcrypt (mot de passe de développement d'au moins 12 caractères). Pour tester le login, utiliser un compte créé via `POST /api/auth/register`.

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { ValidationError } from "../../errors/app-error.js";
-import { registerSchema } from "./auth.schema.js";
+import { parseBody } from "../../http/parse-body.js";
+import { loginSchema, registerSchema } from "./auth.schema.js";
 import type { AuthService } from "./auth.service.js";
 
 export class AuthController {
@@ -11,18 +11,12 @@ export class AuthController {
     }
 
     register = async (req: Request, res: Response): Promise<void> => {
-        const result = registerSchema.safeParse(req.body);
-        if (!result.success) {
-            throw new ValidationError(
-                result.error.issues.map((issue) => ({
-                    field: issue.path.join("."),
-                    code: issue.code,
-                    message: issue.message,
-                })),
-            );
-        }
+        const user = await this.authService.register(parseBody(registerSchema, req.body));
+        res.status(201).json({ data: user });
+    };
 
-        const user = await this.authService.register(result.data);
-        res.status(201).json(user);
+    login = async (req: Request, res: Response): Promise<void> => {
+        const session = await this.authService.login(parseBody(loginSchema, req.body));
+        res.status(200).json({ data: session });
     };
 }

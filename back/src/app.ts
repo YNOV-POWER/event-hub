@@ -18,9 +18,10 @@ export const API_BASE_PATH = "/api";
 
 export interface AppDependencies {
   prisma: PrismaClient;
+  jwtSecret: string;
 }
 
-export function createApp({ prisma }: AppDependencies): Express {
+export function createApp({ prisma, jwtSecret }: AppDependencies): Express {
   const app = express();
   app.disable("x-powered-by");
 
@@ -32,7 +33,8 @@ export function createApp({ prisma }: AppDependencies): Express {
   const eventController = new EventController(new EventService(new PrismaEventRepository(prisma)));
   app.use(`${API_BASE_PATH}/events`, createEventRouter(eventController));
 
-  const authController = new AuthController(new AuthService(prisma));
+
+  const authController = new AuthController(new AuthService(prisma, jwtSecret));
   app.use(`${API_BASE_PATH}/auth`, createAuthRouter(authController));
 
   app.use(notFoundHandler);

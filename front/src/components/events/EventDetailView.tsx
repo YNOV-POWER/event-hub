@@ -2,12 +2,12 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Calendar, CalendarPlus, ChevronLeft, MapPin, User, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { EventItem } from "@/api/client";
 import { Alert } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SyncIndicator } from "@/components/ui/SyncIndicator";
 import { downloadEventIcs } from "@/i18n/calendar";
@@ -34,7 +34,7 @@ export function EventDetailView({
     <div className={styles.page}>
       <div className={styles.topBar}>
         <Link href="/events" className={styles.backLink}>
-          <ChevronLeft size={16} aria-hidden="true" />
+          <Icon name="chevronLeft" size={16} />
           <span>{t("eventDetail.backToCatalogue")}</span>
         </Link>
         {isRevalidating ? <SyncIndicator label={t("eventDetail.revalidating")} /> : null}
@@ -64,7 +64,7 @@ export function EventDetailView({
           <div className={styles.infoCard}>
             <div className={styles.infoRow}>
               <span className={styles.infoIcon} aria-hidden="true">
-                <Calendar size={18} />
+                <Icon name="calendar" size={18} />
               </span>
               <div>
                 <p className={styles.infoPrimary}>{formatted.date}</p>
@@ -76,7 +76,7 @@ export function EventDetailView({
 
             <div className={styles.infoRow}>
               <span className={styles.infoIcon} aria-hidden="true">
-                <MapPin size={18} />
+                <Icon name="mapPin" size={18} />
               </span>
               <div>
                 <p className={styles.infoPrimary}>{event.location}</p>
@@ -85,7 +85,7 @@ export function EventDetailView({
 
             <div className={styles.infoRow}>
               <span className={styles.infoIcon} aria-hidden="true">
-                <User size={18} />
+                <Icon name="user" size={18} />
               </span>
               <div>
                 <p className={styles.infoPrimary}>
@@ -137,7 +137,7 @@ export function EventDetailView({
               <Button
                 variant="secondary"
                 fullWidth
-                leftIcon={<CalendarPlus size={16} aria-hidden="true" />}
+                leftIcon={<Icon name="calendarPlus" size={16} />}
                 onClick={() => downloadEventIcs(event)}
               >
                 {t("eventDetail.addToCalendar")}
@@ -148,7 +148,7 @@ export function EventDetailView({
           </div>
 
           <div className={styles.countCard}>
-            <Users size={16} aria-hidden="true" />
+            <Icon name="users" size={16} />
             <span>
               {t("eventDetail.confirmedParticipants", { count: event.confirmedCount })}
             </span>

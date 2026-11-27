@@ -21,10 +21,34 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   async rewrites() {
     return [
-      // Routes Sprint 2 / Auth non encore exposées côté Back réel -> Prism
+      // Routes Sprint 2 / Organisateur / Auth non encore exposées côté Back réel -> Prism
+      {
+        source: "/api/me/events",
+        destination: `${apiMockBase}/me/events`,
+      },
+      {
+        source: "/api/events/:id/publish",
+        destination: `${apiMockBase}/events/:id/publish`,
+      },
+      {
+        source: "/api/events/:id/cancel",
+        destination: `${apiMockBase}/events/:id/cancel`,
+      },
+      {
+        source: "/api/events/:id/duplicate",
+        destination: `${apiMockBase}/events/:id/duplicate`,
+      },
+      {
+        source: "/api/events/:id/registrations/me",
+        destination: `${apiMockBase}/events/:id/registrations/me`,
+      },
       {
         source: "/api/events/:id/registrations",
         destination: `${apiMockBase}/events/:id/registrations`,
+      },
+      {
+        source: "/api/me/registrations",
+        destination: `${apiMockBase}/me/registrations`,
       },
       {
         source: "/api/auth/:path*",

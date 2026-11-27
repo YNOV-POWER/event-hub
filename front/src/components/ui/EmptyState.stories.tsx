@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { EmptyState } from "./EmptyState";
+import { Icon } from "./Icon";
 
 const noop = () => {};
 
@@ -34,5 +35,16 @@ export const NoRegistrations: Story = {
     description: "Vous n'êtes encore inscrit·e à aucun événement.",
     actionLabel: "Voir les événements",
     actionHref: "/events",
+  },
+};
+
+export const OrganizerNoEvents: Story = {
+  args: {
+    icon: <Icon name="calendarPlus" size={28} />,
+    title: "Aucun événement",
+    description: "Créez votre premier événement : il sera enregistré en brouillon.",
+    actionLabel: "Créer un événement",
+    actionIcon: <Icon name="plus" size={16} />,
+    actionHref: "/admin/events/new",
   },
 };

@@ -25,7 +25,7 @@ export function buildEventIcsContent(event: CalendarEventInput): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//EventHub//Ynov Lyon//FR",
+    "PRODID:-//EventHub//Ynov Connect//FR",
     "BEGIN:VEVENT",
     `UID:${event.id}@eventhub.ynov`,
     `DTSTAMP:${formatIcsDateUtc(new Date().toISOString())}`,

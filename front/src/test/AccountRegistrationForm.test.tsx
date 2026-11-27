@@ -37,7 +37,8 @@ describe("AccountRegistrationForm (US01)", () => {
     );
 
     const alerts = screen.getAllByRole("alert");
-    expect(alerts[0]).toHaveTextContent(/compte existe déjà avec cette adresse email/i);
+    expect(alerts[0]).toHaveTextContent("Un compte existe déjà avec cet email.");
+    expect(screen.getByText("Cet email est déjà utilisé.")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /Se connecter/i }).length).toBeGreaterThan(0);
     await expectNoA11yViolations(container);
   });

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Info, X, XCircle } from "lucide-react";
+import { Icon, type IconName } from "./Icon";
 import styles from "./Toast.module.css";
 
 export type ToastTone = "success" | "info" | "danger";
@@ -13,10 +13,10 @@ export interface ToastProps {
   readonly floating?: boolean;
 }
 
-const ICONS: Record<ToastTone, typeof Info> = {
-  success: CheckCircle2,
-  info: Info,
-  danger: XCircle,
+const ICONS: Record<ToastTone, IconName> = {
+  success: "checkCircle",
+  info: "info",
+  danger: "xCircle",
 };
 
 /**
@@ -29,7 +29,6 @@ export function Toast({
   onClose,
   floating = true,
 }: ToastProps) {
-  const Icon = ICONS[tone];
   const role = tone === "danger" ? "alert" : "status";
 
   return (
@@ -38,7 +37,7 @@ export function Toast({
       aria-live={tone === "danger" ? "assertive" : "polite"}
       className={`${styles.toast} ${styles[tone]} ${floating ? styles.floating : ""}`.trim()}
     >
-      <Icon size={18} className={styles.icon} aria-hidden="true" />
+      <Icon name={ICONS[tone]} size={18} className={styles.icon} />
       <span className={styles.message}>{message}</span>
       {onClose ? (
         <button
@@ -47,7 +46,7 @@ export function Toast({
           aria-label={closeLabel}
           onClick={onClose}
         >
-          <X size={16} aria-hidden="true" />
+          <Icon name="x" size={16} />
         </button>
       ) : null}
     </div>

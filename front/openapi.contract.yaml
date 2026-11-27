@@ -128,6 +128,225 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /me/events:
+    get:
+      tags: [Events]
+      operationId: listMyEvents
+      summary: Liste paginée des événements de l'organisateur connecté (E3, US05)
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Status"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Page des événements de l'organisateur (brouillons, publiés, annulés, passés inclus).
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+              example:
+                data:
+                  - id: "00000000-0000-4000-8200-000000000014"
+                    title: "Conférence Accessibilité Web"
+                    description: "Bonnes pratiques WCAG 2.2 AA, navigation clavier et lecteurs d'écran."
+                    category: "CONFERENCE"
+                    location: "Amphithéâtre Ynov, Lyon 7e"
+                    startsAt: "2026-12-15T08:00:00.000Z"
+                    endsAt: "2026-12-15T12:00:00.000Z"
+                    capacity: 50
+                    confirmedCount: 0
+                    remainingSeats: 50
+                    waitlistCount: 0
+                    status: "DRAFT"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-24T10:00:00.000Z"
+                    updatedAt: "2026-11-24T10:00:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000001"
+                    title: "TypeScript Workshop"
+                    description: "Hands-on session: strict typing, generics and narrowing on a real codebase."
+                    category: "WORKSHOP"
+                    location: "Hub Central, 12 rue de la République, Lyon"
+                    startsAt: "2026-12-10T18:00:00.000Z"
+                    endsAt: "2026-12-10T21:00:00.000Z"
+                    capacity: 30
+                    confirmedCount: 18
+                    remainingSeats: 12
+                    waitlistCount: 4
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000005"
+                    title: "Meetup Node.js Lyon"
+                    description: "Deux talks courts puis échanges autour d'un verre."
+                    category: "OTHER"
+                    location: "Espace coworking, Lyon 7e"
+                    startsAt: "2026-12-18T17:30:00.000Z"
+                    endsAt: "2026-12-18T20:00:00.000Z"
+                    capacity: 50
+                    confirmedCount: 5
+                    remainingSeats: 45
+                    waitlistCount: 0
+                    status: "PUBLISHED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-11-16T09:05:00.000Z"
+                    updatedAt: "2026-11-16T09:05:00.000Z"
+                  - id: "00000000-0000-4000-8200-000000000015"
+                    title: "Atelier Figma"
+                    description: "Atelier annulé."
+                    category: "WORKSHOP"
+                    location: "Campus Ynov, Lyon"
+                    startsAt: "2026-09-14T12:00:00.000Z"
+                    endsAt: "2026-09-14T15:00:00.000Z"
+                    capacity: 20
+                    confirmedCount: 0
+                    remainingSeats: 20
+                    waitlistCount: 0
+                    status: "CANCELLED"
+                    organizer:
+                      id: "00000000-0000-4000-8100-000000000001"
+                      displayName: "Grace"
+                    createdAt: "2026-09-01T09:00:00.000Z"
+                    updatedAt: "2026-09-10T09:00:00.000Z"
+                meta:
+                  page: 1
+                  pageSize: 10
+                  totalItems: 4
+                  totalPages: 1
+        "400":
+          $ref: "#/components/responses/InvalidQueryParam"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/publish:
+    post:
+      tags: [Events]
+      operationId: publishEvent
+      summary: Publier un événement en brouillon (E6, US06)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Événement publié.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/InvalidStateTransition"
+        "422":
+          $ref: "#/components/responses/PublishValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/cancel:
+    post:
+      tags: [Events]
+      operationId: cancelEvent
+      summary: Annuler un événement (E7, US08)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Événement annulé (idempotent).
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/duplicate:
+    post:
+      tags: [Events]
+      operationId: duplicateEvent
+      summary: Dupliquer un événement en nouveau brouillon (US26, Could)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "201":
+          description: Copie créée en brouillon (DRAFT).
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /events/{id}/registrations:
     post:
       tags: [Registrations]
@@ -171,6 +390,131 @@ paths:
           $ref: "#/components/responses/RegistrationConflict"
         "422":
           $ref: "#/components/responses/RegistrationUnprocessable"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /events/{id}/registrations/me:
+    delete:
+      tags: [Registrations]
+      operationId: cancelMyRegistration
+      summary: Se désinscrire d'un événement ou quitter la liste d'attente (US13, réservé Sprint 2)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Désinscription effectuée.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /me/registrations:
+    get:
+      tags: [Registrations]
+      operationId: listMyRegistrations
+      summary: Liste des inscriptions de l'utilisateur connecté (US14, réservé Sprint 2)
+      description: |
+        Retourne les inscriptions (à venir et passées) de l'utilisateur authentifié avec un résumé
+        embarqué de chaque événement pour servir l'écran « Mes inscriptions » en un seul appel.
+      responses:
+        "200":
+          description: Inscriptions de l'utilisateur connecté.
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyRegistrationsResponse"
+              example:
+                data:
+                  - id: "00000000-0000-4000-8300-000000000001"
+                    eventId: "00000000-0000-4000-8200-000000000001"
+                    status: "CONFIRMED"
+                    position: null
+                    promotedAt: null
+                    createdAt: "2026-11-18T10:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000001"
+                      title: "TypeScript Workshop"
+                      description: "Hands-on session: strict typing, generics and narrowing on a real codebase."
+                      category: "WORKSHOP"
+                      location: "Hub Central, Lyon"
+                      startsAt: "2026-12-10T18:00:00.000Z"
+                      endsAt: "2026-12-10T21:00:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000003"
+                    eventId: "00000000-0000-4000-8200-000000000003"
+                    status: "CONFIRMED"
+                    position: null
+                    promotedAt: "2026-11-24T16:20:00.000Z"
+                    createdAt: "2026-11-19T09:15:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000003"
+                      title: "Jazz au parc"
+                      description: "Trio acoustique en plein air. Places limitées."
+                      category: "CONCERT"
+                      location: "Kiosque du parc, Lyon 6e"
+                      startsAt: "2026-12-12T19:30:00.000Z"
+                      endsAt: "2026-12-12T22:30:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000006"
+                    eventId: "00000000-0000-4000-8200-000000000002"
+                    status: "WAITLISTED"
+                    position: 3
+                    promotedAt: null
+                    createdAt: "2026-11-20T14:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000002"
+                      title: "Conférence Web & Accessibilité"
+                      description: "Une journée de talks sur le RGAA, les lecteurs d'écran et le design inclusif."
+                      category: "CONFERENCE"
+                      location: "Centre des congrès, Lyon 6e"
+                      startsAt: "2026-12-15T08:00:00.000Z"
+                      endsAt: "2026-12-15T16:00:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000010"
+                    eventId: "00000000-0000-4000-8200-000000000013"
+                    status: "CONFIRMED"
+                    position: null
+                    promotedAt: null
+                    createdAt: "2026-09-20T12:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000013"
+                      title: "Retour d'expérience Kubernetes"
+                      description: "Événement passé."
+                      category: "CONFERENCE"
+                      location: "Centre des congrès, Lyon 6e"
+                      startsAt: "2026-10-02T16:30:00.000Z"
+                      endsAt: "2026-10-02T19:30:00.000Z"
+                      status: "PUBLISHED"
+                  - id: "00000000-0000-4000-8300-000000000009"
+                    eventId: "00000000-0000-4000-8200-000000000012"
+                    status: "CANCELLED"
+                    position: null
+                    promotedAt: null
+                    createdAt: "2026-09-01T10:00:00.000Z"
+                    event:
+                      id: "00000000-0000-4000-8200-000000000012"
+                      title: "Concert d'hiver"
+                      description: "Annulé pour raisons techniques."
+                      category: "CONCERT"
+                      location: "Salle des fêtes, Villeurbanne"
+                      startsAt: "2026-09-14T12:00:00.000Z"
+                      endsAt: "2026-09-14T14:00:00.000Z"
+                      status: "CANCELLED"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -253,6 +597,13 @@ components:
       schema:
         type: string
       example: WORKSHOP,CONCERT
+    Status:
+      name: status
+      in: query
+      description: Un ou plusieurs statuts séparés par des virgules (DRAFT, PUBLISHED, CANCELLED).
+      schema:
+        type: string
+      example: DRAFT,PUBLISHED
     Q:
       name: q
       in: query
@@ -340,6 +691,11 @@ components:
         remainingSeats:
           type: integer
           readOnly: true
+        waitlistCount:
+          type: integer
+          minimum: 0
+          readOnly: true
+          description: Nombre de participants en liste d'attente (optionnel, Sprint 2 / US20 / US27).
         status:
           $ref: "#/components/schemas/EventStatus"
         organizer:
@@ -438,6 +794,60 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/Registration"
+    MyRegistrationEventSummary:
+      type: object
+      required: [id, title, description, category, location, startsAt, endsAt, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          $ref: "#/components/schemas/EventCategory"
+        location:
+          type: string
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/EventStatus"
+    MyRegistrationItem:
+      type: object
+      required: [id, eventId, status, position, promotedAt, createdAt, event]
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventId:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/RegistrationStatus"
+        position:
+          type: ["integer", "null"]
+        promotedAt:
+          type: ["string", "null"]
+          format: date-time
+          description: "Horodatage de promotion automatique depuis la liste d'attente (US21), null sinon."
+        createdAt:
+          type: string
+          format: date-time
+        event:
+          $ref: "#/components/schemas/MyRegistrationEventSummary"
+    MyRegistrationsResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MyRegistrationItem"
     RegisterAccountRequest:
       type: object
       required: [email, password, displayName]
@@ -582,6 +992,52 @@ components:
             instance: /api/events/00000000-0000-4000-8200-000000000010
             code: NOT_FOUND
             requestId: req_3f2a9c1e5b7d4e8f9a0b1c2d3e4f5a6b
+    Forbidden:
+      description: Rôle ou propriété insuffisants.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: Organizer role required.
+            instance: /api/me/events
+            code: FORBIDDEN
+            requestId: req_forbidden_01
+    InvalidStateTransition:
+      description: Transition de statut interdite (événement déjà publié ou annulé).
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/invalid-state-transition
+            title: Invalid state transition
+            status: 409
+            detail: Only DRAFT events can be published.
+            instance: /api/events/00000000-0000-4000-8200-000000000001/publish
+            code: INVALID_STATE_TRANSITION
+            requestId: req_invalid_state_01
+    PublishValidationFailed:
+      description: Échec de revalidation lors de la publication (date passée ou lieu manquant).
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: /problems/validation-failed
+            title: Validation failed
+            status: 422
+            detail: Event cannot be published with a past start date.
+            instance: /api/events/00000000-0000-4000-8200-000000000014/publish
+            code: VALIDATION_FAILED
+            requestId: req_publish_422_01
+            errors:
+              - field: startsAt
+                code: PAST_DATE
+                message: startsAt must be in the future.
     RegistrationConflict:
       description: Conflit métier lors de l'inscription (complet ou déjà inscrit).
       content:

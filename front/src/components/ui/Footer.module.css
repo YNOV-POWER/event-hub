@@ -4,20 +4,21 @@
 }
 
 .inner {
-  max-width: var(--container-max);
+  max-width: calc(var(--container-max) + 2 * var(--space-6));
   margin: 0 auto;
-  padding: var(--space-6);
+  padding: var(--space-8) var(--space-6);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
+  font-size: 0.8125rem;
+  line-height: 20px;
 }
 
 .copy {
   margin: 0;
-  font-size: var(--text-small);
-  color: var(--color-text-muted);
+  color: var(--color-text-subtle);
 }
 
 .links {
@@ -27,7 +28,6 @@
 }
 
 .link {
-  font-size: var(--text-small);
   color: var(--color-text-muted);
 }
 

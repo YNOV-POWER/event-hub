@@ -4,7 +4,7 @@ import { createPrismaClient } from "./lib/prisma.js";
 
 const env = loadEnv();
 const prisma = createPrismaClient(env.DATABASE_URL);
-const app = createApp({ prisma });
+const app = createApp({ prisma, jwtSecret: env.JWT_SECRET });
 
 const server = app.listen(env.PORT, (error) => {
   if (error) {

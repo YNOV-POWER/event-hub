@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { UserRole } from "@/api/client";
 import { Avatar } from "./Avatar";
+import { Icon } from "./Icon";
 import styles from "./Navbar.module.css";
 
 export interface NavbarUser {
@@ -22,7 +22,9 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
   const { t } = useTranslation();
   const isEvents = currentPath === "/" || currentPath.startsWith("/events");
   const isMyRegistrations = currentPath.startsWith("/me/registrations");
-  const isAdminNew = currentPath.startsWith("/admin");
+  const isMyEvents =
+    currentPath.startsWith("/me/events") || currentPath.startsWith("/admin/events");
+  const isDashboard = currentPath.startsWith("/dashboard");
 
   return (
     <header className={styles.header}>
@@ -53,13 +55,22 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
               </Link>
             ) : null}
             {user?.role === "ORGANIZER" ? (
-              <Link
-                href="/admin/events/new"
-                className={`${styles.navLink} ${isAdminNew ? styles.navLinkActive : ""}`.trim()}
-                aria-current={isAdminNew ? "page" : undefined}
-              >
-                {t("nav.newEvent")}
-              </Link>
+              <>
+                <Link
+                  href="/me/events"
+                  className={`${styles.navLink} ${isMyEvents ? styles.navLinkActive : ""}`.trim()}
+                  aria-current={isMyEvents ? "page" : undefined}
+                >
+                  {t("nav.myEvents")}
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className={`${styles.navLink} ${isDashboard ? styles.navLinkActive : ""}`.trim()}
+                  aria-current={isDashboard ? "page" : undefined}
+                >
+                  {t("nav.dashboard")}
+                </Link>
+              </>
             ) : null}
           </nav>
         </div>
@@ -84,21 +95,21 @@ export function Navbar({ currentPath, user = null, onSignOut }: NavbarProps) {
                 <>
                   <span className={styles.divider} aria-hidden="true" />
                   <button type="button" className={styles.logoutButton} onClick={onSignOut}>
-                    <LogOut size={16} aria-hidden="true" />
+                    <Icon name="logOut" size={16} />
                     <span>{t("nav.logout")}</span>
                   </button>
                 </>
               ) : null}
             </>
           ) : (
-            <>
+            <div className={styles.guestActions}>
               <Link href="/login" className={styles.loginLink}>
                 {t("nav.login")}
               </Link>
               <Link href="/register" className={styles.registerButton}>
                 {t("nav.register")}
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>

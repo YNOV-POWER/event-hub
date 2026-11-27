@@ -3,7 +3,7 @@
     "name": "EventHub",
     "skipToContent": "Aller au contenu principal",
     "footer": {
-      "copyright": "© 2026 EventHub · Ynov Lyon",
+      "copyright": "© 2026 EventHub · Ynov Connect",
       "legal": "Mentions légales",
       "accessibility": "Accessibilité",
       "contact": "Contact"
@@ -13,6 +13,8 @@
     "mainLabel": "Navigation principale",
     "events": "Événements",
     "myRegistrations": "Mes inscriptions",
+    "myEvents": "Mes événements",
+    "dashboard": "Tableau de bord",
     "newEvent": "Créer un événement",
     "login": "Se connecter",
     "register": "Créer un compte",
@@ -126,13 +128,15 @@
       "notesMax": "La remarque ne peut pas dépasser 300 caractères."
     }
   },
+  "authLayout": {
+    "overline": "Bienvenue",
+    "title": "Tous les événements Ynov, au même endroit.",
+    "subtitle": "Ateliers, conférences, concerts et meetups : inscrivez-vous en un clic et gérez vos places.",
+    "benefitOneClick": "Inscription en un clic",
+    "benefitCalendar": "Export vers votre agenda (.ics)",
+    "benefitWaitlist": "Liste d'attente automatique"
+  },
   "accountRegister": {
-    "brandOverline": "Bienvenue",
-    "brandTitle": "Tous les événements Ynov, au même endroit.",
-    "brandSubtitle": "Ateliers, conférences, concerts et meetups : inscrivez-vous en un clic et gérez vos places.",
-    "feature1": "Inscription en un clic",
-    "feature2": "Export vers votre agenda (.ics)",
-    "feature3": "Liste d'attente automatique",
     "title": "Créer un compte",
     "subtitle": "Gratuit, en moins d'une minute.",
     "displayNameLabel": "Nom affiché",
@@ -148,22 +152,28 @@
     "alreadyAccount": "Déjà un compte ?",
     "loginLink": "Se connecter",
     "validation": {
-      "displayNameMin": "Le nom affiché doit contenir au moins 2 caractères.",
-      "displayNameMax": "Le nom affiché ne peut pas dépasser 80 caractères.",
+      "displayNameLength": "Entre 2 et 80 caractères.",
       "emailInvalid": "Veuillez saisir une adresse email valide.",
+      "emailAlreadyUsed": "Cet email est déjà utilisé.",
       "passwordMin": "Le mot de passe doit contenir au moins 12 caractères."
     }
   },
   "login": {
     "title": "Se connecter",
-    "subtitle": "Accédez à vos inscriptions et à votre espace organisateur.",
-    "accountCreatedBanner": "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
-    "redirectNotice": "Connectez-vous pour accéder à la page demandée.",
-    "demoTitle": "Mode démonstration (US02 Back en attente)",
-    "demoParticipant": "Simuler session Participant (Ada)",
-    "demoOrganizer": "Simuler session Organisateur (Grace)",
-    "noAccount": "Pas encore de compte ?",
-    "registerLink": "Créer un compte"
+    "subtitle": "Heureux de vous revoir !",
+    "accountCreatedBanner": "Compte créé. Vous pouvez vous connecter.",
+    "redirectNotice": "Connectez-vous pour accéder à « {{page}} ».",
+    "redirectNoticeGeneric": "Connectez-vous pour accéder à la page demandée.",
+    "emailLabel": "Email",
+    "passwordLabel": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "noAccount": "Pas de compte ?",
+    "registerLink": "En créer un",
+    "validation": {
+      "emailInvalid": "Veuillez saisir une adresse email valide.",
+      "passwordRequired": "Veuillez saisir votre mot de passe."
+    }
   },
   "errors": {
     "retry": "Réessayer",
@@ -186,10 +196,10 @@
       "MALFORMED_REQUEST": "La requête envoyée est mal formée.",
       "INVALID_QUERY_PARAM": "Un ou plusieurs paramètres de recherche sont invalides.",
       "UNAUTHENTICATED": "Authentification requise pour cette action.",
-      "INVALID_CREDENTIALS": "Identifiants incorrects.",
+      "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
       "FORBIDDEN": "Vous n'avez pas les permissions requises.",
       "NOT_FOUND": "La ressource demandée est introuvable.",
-      "EMAIL_ALREADY_USED": "Un compte existe déjà avec cette adresse email.",
+      "EMAIL_ALREADY_USED": "Un compte existe déjà avec cet email.",
       "ALREADY_REGISTERED": "Vous êtes déjà inscrit·e à cet événement.",
       "EVENT_FULL": "Cet événement est complet : il ne reste plus aucune place disponible.",
       "REGISTRATION_CLOSED": "Les inscriptions sont closes pour cet événement.",
@@ -205,10 +215,254 @@
     "noteTitle": "Information de sécurité",
     "clientGuardNote": "Les gardes Front améliorent l'expérience utilisateur ; le contrôle d'accès réel reste garanti par le Back (401 / 403)."
   },
+  "myRegistrations": {
+    "title": "Mes inscriptions",
+    "subtitle": "Retrouvez vos événements à venir et passés.",
+    "tabsLabel": "Filtrer par période",
+    "upcomingTab": "À venir",
+    "pastTab": "Passées",
+    "pastSectionTitle": "Passées",
+    "loadingAnnouncement": "Chargement de vos inscriptions en cours",
+    "revalidating": "Mise à jour de vos inscriptions…",
+    "promotionBanner": "Bonne nouvelle : une place s'est libérée, vous êtes inscrit·e à « {{title}} ».",
+    "promotionAction": "Voir l'événement",
+    "status": {
+      "confirmed": "Confirmée",
+      "waitlisted": "Attente · {{ordinal}}",
+      "attended": "Participé",
+      "cancelled": "Annulé"
+    },
+    "actions": {
+      "ics": ".ics",
+      "icsAriaLabel": "Ajouter « {{title}} » au calendrier (.ics)",
+      "unsubscribe": "Se désinscrire",
+      "leaveWaitlist": "Quitter la liste",
+      "viewEvent": "Voir les détails de {{title}}"
+    },
+    "emptyTitle": "Aucune inscription",
+    "emptyDescription": "Parcourez le catalogue pour trouver un événement qui vous plaît.",
+    "emptyPastTitle": "Aucune inscription passée",
+    "emptyPastDescription": "Vos événements terminés ou annulés apparaîtront ici.",
+    "emptyAction": "Voir les événements",
+    "loadError": "Impossible de charger vos inscriptions.",
+    "confirmModal": {
+      "unsubscribeTitle": "Se désinscrire de « {{title}} » ?",
+      "unsubscribeDescription": "Votre place sera libérée pour un autre participant.",
+      "unsubscribeConfirm": "Me désinscrire",
+      "leaveWaitlistTitle": "Quitter la liste d'attente pour « {{title}} » ?",
+      "leaveWaitlistDescription": "Vous perdrez votre position dans la liste d'attente.",
+      "leaveWaitlistConfirm": "Quitter la liste",
+      "cancel": "Annuler",
+      "submitting": "Annulation…"
+    },
+    "toast": {
+      "unsubscribed": "Vous êtes désinscrit·e de « {{title}} ».",
+      "leftWaitlist": "Vous avez quitté la liste d'attente pour « {{title}} ».",
+      "close": "Fermer la notification"
+    }
+  },
+  "myEvents": {
+    "title": "Mes événements",
+    "subtitle": "Créez, publiez et suivez vos événements.",
+    "createCta": "Créer un événement",
+    "revalidating": "Mise à jour de vos événements…",
+    "loadingAnnouncement": "Chargement de vos événements organisateur en cours",
+    "statusFilterLabel": "Filtrer par statut",
+    "tabs": {
+      "ALL": "Tous",
+      "DRAFT": "Brouillons",
+      "PUBLISHED": "Publiés",
+      "CANCELLED": "Annulés"
+    },
+    "sortLabel": "Trier par",
+    "sortOptions": {
+      "-startsAt": "Date (récent d'abord)",
+      "startsAt": "Date (plus proche)",
+      "-createdAt": "Création (plus récents)",
+      "title": "Titre (A → Z)",
+      "-title": "Titre (Z → A)"
+    },
+    "columns": {
+      "title": "Titre",
+      "date": "Date",
+      "status": "Statut",
+      "registrations": "Inscrits",
+      "actions": "Actions"
+    },
+    "noRegistrationsDash": "—",
+    "fillLabel": "Remplissage de « {{title}} » : {{confirmed}} sur {{capacity}}",
+    "actions": {
+      "publish": "Publier",
+      "publishAria": "Publier « {{title}} »",
+      "edit": "Modifier",
+      "editAria": "Modifier « {{title}} »",
+      "registrations": "Inscrits",
+      "registrationsAria": "Voir les inscrits de « {{title}} »",
+      "cancel": "Annuler",
+      "cancelAria": "Annuler « {{title}} »",
+      "duplicate": "Dupliquer",
+      "duplicateAria": "Dupliquer « {{title}} »"
+    },
+    "banners": {
+      "published": "« {{title}} » a été publié.",
+      "cancelled": "« {{title}} » a été annulé.",
+      "duplicated": "Une copie de « {{title}} » a été enregistrée en brouillon.",
+      "publishPastDate": "Impossible de publier : la date de début est passée.",
+      "publishValidationFailed": "Impossible de publier : vérifiez que le lieu et une date future sont renseignés.",
+      "publishInvalidState": "Cet événement a déjà été publié ou annulé.",
+      "editAction": "Modifier"
+    },
+    "cancelModal": {
+      "title": "Annuler « {{title}} » ?",
+      "descriptionWithRegistrants_one": "{{count}} inscrit sera notifié et son inscription annulée. Cette action est définitive.",
+      "descriptionWithRegistrants_other": "{{count}} inscrits seront notifiés et leurs inscriptions annulées. Cette action est définitive.",
+      "descriptionWithoutRegistrants": "Cet événement passera définitivement au statut annulé. Cette action est définitive.",
+      "back": "Retour",
+      "confirm": "Annuler l'événement",
+      "submitting": "Annulation…"
+    },
+    "paginationSummary": "Affichage {{from}}–{{to}} sur {{total}}",
+    "emptyTitle": "Aucun événement",
+    "emptyDescription": "Créez votre premier événement : il sera enregistré en brouillon.",
+    "emptyFilteredTitle": "Aucun événement dans ce statut",
+    "emptyFilteredDescription": "Aucun de vos événements ne correspond au filtre sélectionné.",
+    "emptyFilteredAction": "Voir tous mes événements"
+  },
+  "dashboard": {
+    "greeting": "Bonjour {{name}}",
+    "defaultTitle": "Tableau de bord",
+    "subtitle": "Voici l'activité de vos événements.",
+    "createCta": "Créer un événement",
+    "revalidating": "Actualisation du tableau de bord…",
+    "loadingAnnouncement": "Chargement du tableau de bord organisateur en cours",
+    "kpi": {
+      "upcomingLabel": "Événements à venir",
+      "upcomingThisMonth": "+{{count}} ce mois-ci",
+      "upcomingNoneThisMonth": "Aucun ce mois-ci",
+      "draftsLabel": "Brouillons",
+      "draftsToPublish": "À publier",
+      "draftsNone": "À jour",
+      "fillRateLabel": "Taux de remplissage moyen",
+      "fillRateCaption_one": "Sur {{count}} événement à venir",
+      "fillRateCaption_other": "Sur {{count}} événements à venir",
+      "fillRateEmpty": "Aucun événement publié",
+      "waitlistLabel": "En liste d'attente",
+      "waitlistCaption_one": "Sur {{count}} événement",
+      "waitlistCaption_other": "Sur {{count}} événements",
+      "waitlistNone": "Aucune file active"
+    },
+    "upcomingSection": {
+      "title": "Prochains événements",
+      "eventColumn": "Événement",
+      "fillColumn": "Remplissage",
+      "fillBarLabel": "Remplissage de « {{title}} » : {{percent}} %",
+      "empty": "Aucun événement publié à venir pour le moment.",
+      "manageLink": "Gérer mes événements"
+    },
+    "todoSection": {
+      "title": "À faire",
+      "draftsTitle_one": "{{count}} brouillon à publier",
+      "draftsTitle_other": "{{count}} brouillons à publier",
+      "almostFullTitle": "Bientôt complet",
+      "fullTitle": "Événement complet",
+      "almostFullSubtitle_one": "{{title}} : {{count}} place",
+      "almostFullSubtitle_other": "{{title}} : {{count}} places",
+      "fullSubtitle": "{{title}} : 0 place restante",
+      "waitlistTitle_one": "{{count}} personne en attente",
+      "waitlistTitle_other": "{{count}} personnes en attente",
+      "allClearTitle": "Tout est à jour",
+      "allClearSubtitle": "Aucune action immédiate sur vos événements."
+    },
+    "emptyTitle": "Bienvenue dans votre espace organisateur",
+    "emptyDescription": "Créez votre premier événement pour suivre ici vos inscriptions et votre taux de remplissage."
+  },
+  "eventForm": {
+    "backToMyEvents": "Mes événements",
+    "createTitle": "Créer un événement",
+    "editTitle": "Modifier l'événement",
+    "sectionInformation": "Informations",
+    "sectionSchedule": "Date et capacité",
+    "titleLabel": "Titre *",
+    "titlePlaceholder": "Titre de l'événement",
+    "titleHint": "3 à 120 caractères",
+    "descriptionLabel": "Description",
+    "descriptionHint": "{{length}} / 5000 caractères · texte brut, aucun HTML interprété",
+    "categoryLabel": "Catégorie *",
+    "categoryOption": "{{label}} ({{value}})",
+    "locationLabel": "Lieu *",
+    "locationPlaceholder": "Lieu de l'événement",
+    "startsAtLabel": "Début *",
+    "startsAtHint": "Heure locale ({{timeZone}}), envoyée en UTC",
+    "endsAtLabel": "Fin *",
+    "capacityLabel": "Capacité *",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saveDraft": "Enregistrer le brouillon",
+    "saving": "Enregistrement…",
+    "previewTitle": "Aperçu",
+    "tipsTitle": "Bon à savoir",
+    "tips": {
+      "draft": "Un événement créé est en brouillon (DRAFT) jusqu'à publication.",
+      "notify": "Les inscrits sont notifiés des modifications.",
+      "cancelled": "Un événement annulé n'est plus modifiable."
+    },
+    "notEditable": "Cet événement est annulé : il n'est plus modifiable.",
+    "capacityBelowConfirmedAlert": "La capacité ne peut pas être inférieure au nombre d'inscrits confirmés ({{count}}).",
+    "loadingAnnouncement": "Chargement de l'événement",
+    "validation": {
+      "titleLength": "Entre 3 et 120 caractères.",
+      "descriptionMax": "5000 caractères maximum.",
+      "locationRequired": "Indiquez le lieu de l'événement.",
+      "locationMax": "200 caractères maximum.",
+      "startsAtRequired": "Indiquez la date de début.",
+      "endsAtRequired": "Indiquez la date de fin.",
+      "dateInvalid": "Date invalide.",
+      "startsAtFuture": "La date de début doit être dans le futur.",
+      "endsAfterStart": "La fin doit être après le début.",
+      "capacityInteger": "Indiquez un nombre entier de places.",
+      "capacityMin": "Minimum 1 place.",
+      "capacityBelowConfirmed": "Minimum {{count}} (inscrits confirmés)."
+    }
+  },
+  "registrants": {
+    "backToMyEvents": "Mes événements",
+    "title": "Inscrits · {{title}}",
+    "subtitle": "{{date}} · {{location}}",
+    "export": "Exporter en CSV",
+    "stats": {
+      "confirmedValue": "{{confirmed}} / {{capacity}}",
+      "confirmedLabel": "Confirmés",
+      "fillRate": "{{percent}} % de remplissage",
+      "remainingLabel": "Places restantes",
+      "remainingCaption": "Clôture au début",
+      "waitlistLabel": "Liste d'attente",
+      "waitlistCaption": "Promotion automatique"
+    },
+    "columns": {
+      "participant": "Participant",
+      "email": "Email",
+      "status": "Statut",
+      "registeredAt": "Inscrit le"
+    },
+    "tableLabel": "Inscrits de {{title}}",
+    "statuses": {
+      "CONFIRMED": "Confirmé",
+      "WAITLISTED": "Attente · {{position}}"
+    },
+    "paginationSummary": "Affichage {{from}}–{{to}} sur {{total}}",
+    "emptyTitle": "Aucun inscrit pour l'instant",
+    "emptyDescription": "Partagez le lien de l'événement pour attirer des participants.",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "forbiddenTitle": "Accès refusé",
+    "forbiddenDescription": "Seul l'organisateur de l'événement voit ses inscrits.",
+    "back": "Retour",
+    "loadingAnnouncement": "Chargement des inscrits",
+    "csvFilename": "inscrits-{{slug}}.csv",
+    "csvPosition": "Position en liste d'attente"
+  },
   "placeholders": {
     "myRegistrationsTitle": "Mes inscriptions",
-    "myRegistrationsBody": "Cette vue sera branchée sur GET /api/me/registrations au Sprint 2 (US14).",
-    "newEventTitle": "Créer un événement",
-    "newEventBody": "Réservé aux organisateurs — sera branché sur POST /api/events (US05)."
+    "myRegistrationsBody": "Cette vue sera branchée sur GET /api/me/registrations au Sprint 2 (US14)."
   }
 }

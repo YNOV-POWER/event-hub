@@ -48,6 +48,19 @@ const eslintConfig = [
           message: "Aucun appel globalThis.fetch direct dans l'UI : passez par src/api/client.ts.",
         },
       ],
+      // Source de vérité unique pour les icônes : passer par src/components/ui/Icon.tsx
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "lucide-react",
+              message:
+                "Importez les icônes depuis @/components/ui/Icon plutôt que directement depuis lucide-react.",
+            },
+          ],
+        },
+      ],
     },
   },
   {
@@ -56,6 +69,13 @@ const eslintConfig = [
     rules: {
       "no-restricted-globals": "off",
       "no-restricted-properties": "off",
+    },
+  },
+  {
+    // Seul le composant Design System Icon.tsx a le droit d'importer lucide-react
+    files: ["src/components/ui/Icon.tsx"],
+    rules: {
+      "no-restricted-imports": "off",
     },
   },
 ];

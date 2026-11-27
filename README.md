@@ -138,7 +138,9 @@ npm run build
 │   ├── maquettes/                        # Maquettes : captures Figma + wireframes HTML
 │   ├── 2026-11-20_backend-init-report.md # Compte rendu initialisation Back
 │   └── 2026-11-23_front-atelier-6-report.md # Compte rendu Front (Atelier 6) et écarts Sprint 2
-└── .github/workflows/front-ci.yml        # CI Front + publication Storybook sur GitHub Pages
+└── .github/workflows/
+    ├── front-ci.yml                      # CI Front + publication Storybook sur GitHub Pages
+    └── back-ci.yml                       # CI Back : lint, typecheck, build, migrations + seed sur PostgreSQL 18
 ```
 
 ## Documentation complémentaire
@@ -148,3 +150,4 @@ npm run build
 - Contrat d'API : [`api-contract-v0.md`](api-contract-v0.md)
 - Compte rendu : [`doc/`](doc/)
 - Suivi Jira : [`Cours/Jira.md`](Cours/Jira.md)
+- Maquette Figma : [`maquette`](https://www.figma.com/design/iZapxMt0XEq0lr9vDvjWIj/Event-hub?node-id=1-2598&t=WGXYzkp8GINI1k30-0)

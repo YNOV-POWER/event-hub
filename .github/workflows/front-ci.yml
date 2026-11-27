@@ -51,6 +51,185 @@ jobs:
         with:
           path: front/storybook-static
 
+  audit:
+    name: Rapport RGAA & SEO
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: front
+    env:
+      SERVE_COMMAND: "npx next start -p 3001"
+      BASE_URL: "http://localhost:3001"
+      NEXT_PUBLIC_API_BASE_URL: /api
+      API_EVENTS_BASE: "http://localhost:3000/api"
+      API_MOCK_BASE: "http://localhost:4010"
+      PAGES: "/"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+
+      - name: Démarrer la base, le back et le mock
+        working-directory: .
+        run: |
+          docker compose --profile mock up -d --build --wait db back prism
+          # Toute réponse HTTP, même 404, prouve que le service écoute
+          for url in http://localhost:3000/ http://localhost:4010/; do
+            curl --silent --show-error --output /dev/null \
+              --retry 30 --retry-delay 2 --retry-all-errors "$url"
+          done
+
+      - run: npm ci
+      - run: npm run api:generate
+      - run: npm run build
+
+      - name: Installer les outils d'audit
+        run: npm install --global "@axe-core/cli@^4.11" "@lhci/cli@0.15"
+
+      - name: Démarrer le site
+        run: |
+          nohup bash -c "$SERVE_COMMAND" > "$RUNNER_TEMP/server.log" 2>&1 &
+          if ! curl --silent --fail --output /dev/null \
+            --retry 30 --retry-delay 2 --retry-all-errors "$BASE_URL"; then
+            cat "$RUNNER_TEMP/server.log"
+            exit 1
+          fi
+
+      - name: Audit RGAA (axe-core)
+        run: |
+          reports="$PWD/audit-reports/rgaa"
+          mkdir -p "$reports" "$RUNNER_TEMP/axe"
+          urls=()
+          for page in $PAGES; do urls+=("$BASE_URL$page"); done
+          # Hors de front/ : évite qu'axe charge l'axe-core du projet
+          cd "$RUNNER_TEMP/axe"
+          axe "${urls[@]}" \
+            --tags RGAAv4 \
+            --load-delay 2000 \
+            --chromedriver-path "$CHROMEWEBDRIVER/chromedriver" \
+            --chrome-options="no-sandbox,disable-dev-shm-usage" \
+            --dir . \
+            --save axe.json
+          cp axe.json "$reports/"
+
+      - name: Audit SEO (Lighthouse)
+        if: ${{ !cancelled() }}
+        run: |
+          node <<'EOF'
+          const { BASE_URL, PAGES, RUNNER_TEMP } = process.env;
+          const url = PAGES.trim().split(/\s+/).map((page) => BASE_URL + page);
+          const config = {
+            ci: {
+              collect: {
+                url,
+                numberOfRuns: 1,
+                settings: { onlyCategories: ["seo"] },
+              },
+              upload: { target: "filesystem", outputDir: "./audit-reports/seo" },
+            },
+          };
+          require("fs").writeFileSync(
+            `${RUNNER_TEMP}/lighthouserc.json`,
+            JSON.stringify(config),
+          );
+          EOF
+          lhci collect --config="$RUNNER_TEMP/lighthouserc.json"
+          lhci upload --config="$RUNNER_TEMP/lighthouserc.json"
+
+      - name: Générer la synthèse
+        if: ${{ !cancelled() }}
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const read = (file) =>
+            fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null;
+          const cell = (text) =>
+            String(text).replace(/\|/g, "\\|").replace(/</g, "&lt;").replace(/\n/g, " ");
+          const out = ["# Rapport RGAA & SEO", "", "## RGAA (tests automatiques)", ""];
+          out.push(
+            "> Contrôle partiel : ce rapport ne donne pas un taux de conformité RGAA. " +
+              "Un audit manuel reste nécessaire.",
+            "",
+          );
+
+          const axe = read("audit-reports/rgaa/axe.json");
+          if (!axe) out.push("⚠️ Rapport axe absent : consultez les logs.", "");
+          for (const page of axe ?? []) {
+            out.push(`### ${page.url}`, "");
+            out.push(
+              `Règles en échec : **${page.violations.length}** · ` +
+                `à vérifier manuellement : **${page.incomplete.length}** · ` +
+                `réussies : ${page.passes.length}`,
+              "",
+            );
+            const rows = [
+              ...page.violations.map((rule) => ["❌ Échec", rule]),
+              ...page.incomplete.map((rule) => ["🔎 À vérifier", rule]),
+            ];
+            if (!rows.length) continue;
+            out.push("| Statut | Tests RGAA | Problème | Impact | Éléments |");
+            out.push("|---|---|---|---|---|");
+            for (const [status, rule] of rows) {
+              const tests = rule.tags
+                .filter((tag) => /^RGAA-\d/.test(tag))
+                .map((tag) => tag.slice(5))
+                .join(", ");
+              out.push(
+                `| ${status} | ${tests || "-"} | [${cell(rule.help)}](${rule.helpUrl}) ` +
+                  `| ${rule.impact ?? "-"} | ${rule.nodes.length} |`,
+              );
+            }
+            out.push("");
+          }
+
+          out.push("## SEO (Lighthouse)", "");
+          const manifest = read("audit-reports/seo/manifest.json");
+          if (!manifest) out.push("⚠️ Rapport Lighthouse absent : consultez les logs.", "");
+          for (const run of manifest ?? []) {
+            const report = read(run.jsonPath);
+            const score = run.summary.seo;
+            out.push(`### ${run.url}`, "");
+            out.push(
+              `Score : **${score == null ? "indisponible" : Math.round(score * 100) + "/100"}**`,
+              "",
+            );
+            if (report.runtimeError) out.push(`⚠️ ${report.runtimeError.message}`, "");
+            const failed = report.categories.seo.auditRefs
+              .map((ref) => report.audits[ref.id])
+              .filter((audit) => audit.score !== null && audit.score < 1);
+            for (const audit of failed) out.push(`- ❌ ${cell(audit.title)}`);
+            out.push("");
+          }
+
+          const markdown = out.join("\n") + "\n";
+          fs.mkdirSync("audit-reports", { recursive: true });
+          fs.writeFileSync("audit-reports/synthese.md", markdown);
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+          EOF
+
+      - name: Afficher les logs en cas d'échec
+        if: failure()
+        working-directory: .
+        run: |
+          docker compose --profile mock logs --no-color --tail 200
+          cat "$RUNNER_TEMP/server.log" || true
+
+      - name: Publier les rapports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-rgaa-seo
+          path: front/audit-reports
+          if-no-files-found: warn
+          retention-days: 30
+
   deploy-storybook:
     name: Publish Storybook on GitHub Pages
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

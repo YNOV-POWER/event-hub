@@ -63,10 +63,11 @@ jobs:
     env:
       SERVE_COMMAND: "npx next start -p 3001"
       BASE_URL: "http://localhost:3001"
+      # Utilisées par le front, au build comme au démarrage
       NEXT_PUBLIC_API_BASE_URL: /api
       API_EVENTS_BASE: "http://localhost:3000/api"
       API_MOCK_BASE: "http://localhost:4010"
-      PAGES: "/"
+      PAGES: "/" # chemins séparés par des espaces, ex. "/ /contact /connexion"
     steps:
       - uses: actions/checkout@v4
 
@@ -212,6 +213,98 @@ jobs:
           fs.mkdirSync("audit-reports", { recursive: true });
           fs.writeFileSync("audit-reports/synthese.md", markdown);
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+          EOF
+
+      - name: Contrôles complémentaires (sitemap, favicon, partage)
+        if: ${{ !cancelled() }}
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const { BASE_URL, PAGES, GITHUB_STEP_SUMMARY } = process.env;
+
+          async function get(url) {
+            try {
+              const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+              const body = Buffer.from(await res.arrayBuffer());
+              const type = res.headers.get("content-type") ?? "";
+              return { ok: res.status === 200, status: res.status, type, size: body.length, text: body.toString() };
+            } catch (error) {
+              return { ok: false, status: error.message, type: "", size: 0, text: "" };
+            }
+          }
+
+          // Lit les attributs de chaque balise <link> ou <meta>
+          const tags = (html, name) =>
+            [...html.replace(/<!--[\s\S]*?-->/g, "").matchAll(new RegExp(`<${name}\\s[^>]*>`, "gi"))].map(([tag]) =>
+              Object.fromEntries(
+                [...tag.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)].map((m) => [
+                  m[1].toLowerCase(),
+                  (m[2] ?? m[3]).replace(/&amp;/g, "&"),
+                ]),
+              ),
+            );
+          const rels = (link) => (link.rel ?? "").toLowerCase().split(/\s+/);
+
+          (async () => {
+            const rows = [];
+            const add = (ok, check, detail) =>
+              rows.push(`| ${ok ? "✅" : "❌"} | ${check} | ${String(detail).replace(/\|/g, "\\|")} |`);
+
+            const robots = await get(new URL("/robots.txt", BASE_URL));
+            const hasRobots = robots.ok && robots.type.startsWith("text/plain");
+            add(hasRobots, "robots.txt", `HTTP ${robots.status}`);
+
+            // Sitemaps déclarés dans robots.txt, sinon /sitemap.xml ; testés sur le site local
+            const declared = hasRobots
+              ? [...robots.text.matchAll(/^\s*sitemap:\s*(\S+)/gim)].map((m) => m[1])
+              : [];
+            add(declared.length > 0, "Sitemap déclaré dans robots.txt", declared.join(", ") || "aucun");
+            for (const entry of declared.length ? declared : ["/sitemap.xml"]) {
+              const { pathname, search } = new URL(entry, BASE_URL);
+              const map = await get(new URL(pathname + search, BASE_URL));
+              const valid = map.ok && /<(urlset|sitemapindex)[\s>]/.test(map.text) && /<loc>/.test(map.text);
+              add(valid, `Sitemap ${pathname}`, `HTTP ${map.status}`);
+            }
+
+            for (const path of PAGES.trim().split(/\s+/)) {
+              const url = new URL(BASE_URL + path);
+              const page = await get(url);
+              if (!page.ok) {
+                add(false, `Page ${path}`, `HTTP ${page.status}`);
+                continue;
+              }
+              const links = tags(page.text, "link");
+              const metas = tags(page.text, "meta");
+
+              const declaredIcon = links.find((l) => rels(l).includes("icon") && l.href);
+              const iconUrl = new URL(declaredIcon?.href ?? "/favicon.ico", url);
+              const icon = await get(iconUrl);
+              add(
+                icon.ok && icon.size > 0 && /^(image\/|application\/octet-stream)/.test(icon.type),
+                `Favicon (${path})`,
+                `${declaredIcon ? "déclaré" : "non déclaré"}, ${iconUrl.pathname} : HTTP ${icon.status}`,
+              );
+
+              const canonical = links.find((l) => rels(l).includes("canonical"));
+              add(Boolean(canonical?.href), `URL canonique (${path})`, canonical?.href || "absente");
+              for (const property of ["og:title", "og:description", "og:image"]) {
+                const found = metas.some((m) => m.property === property && m.content);
+                add(found, `${property} (${path})`, found ? "présent" : "absent");
+              }
+            }
+
+            const markdown = [
+              "## Contrôles complémentaires (SEO et partage)",
+              "",
+              "| Statut | Contrôle | Détail |",
+              "|---|---|---|",
+              ...rows,
+              "",
+            ].join("\n");
+            fs.mkdirSync("audit-reports", { recursive: true });
+            fs.appendFileSync("audit-reports/synthese.md", markdown);
+            fs.appendFileSync(GITHUB_STEP_SUMMARY, markdown);
+          })();
           EOF
 
       - name: Afficher les logs en cas d'échec

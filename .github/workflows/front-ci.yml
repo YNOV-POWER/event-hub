@@ -61,7 +61,6 @@ jobs:
       run:
         working-directory: front
     env:
-      # À adapter à votre projet
       SERVE_COMMAND: "npx next start -p 3001"
       BASE_URL: "http://localhost:3001"
       # Utilisées par le front, au build comme au démarrage
